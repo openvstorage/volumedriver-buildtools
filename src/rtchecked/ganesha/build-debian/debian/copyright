@@ -1,0 +1,16 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: volumedriver-base
+Source: <http://www.cloudfounders.com>
+
+Files: *
+Copyright (c) 2013 CloudFounders NV. All rights reserved.
+CloudFrames® is a (registered) trademark of CloudFounders NV, with registered seat at 9080
+Lochristi (Belgium), Antwerpsesteenweg 19. All material, information and instructions for use
+in relation to CloudFrames® are the sole property of CloudFounders NV. All material,
+information and instructions are provided on an AS IS basis without warranty of any kind.
+There are no warranties granted or extended by this document. CloudFounders NV does not
+warrant, guarantee or make any representations regarding the use, or the results of the use
+of the software or the information contained herein. CloudFounders NV shall not be liable for
+any direct, indirect, consequential or incidental damages arising out of the use or inability to
+use the software or the information contained herein.
+

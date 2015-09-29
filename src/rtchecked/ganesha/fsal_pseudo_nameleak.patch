@@ -1,0 +1,11 @@
+--- nfs-ganesha-2.1.0-0.1.1-Source/FSAL/FSAL_PSEUDO/main.c	2015-05-21 15:27:25.586142882 +0300
++++ nfs-ganesha-2.1.0-0.1.1-Source.new/FSAL/FSAL_PSEUDO/main.c	2015-05-21 15:38:16.390136116 +0300
+@@ -173,5 +173,7 @@ void pseudo_fsal_init(void)
+ 	myself->ops->create_export = pseudofs_create_export;
+ 	myself->ops->init_config = init_config;
+ 	myself->ops->unload = unload_pseudo_fsal;
+-	myself->name = gsh_strdup("PSEUDO");
++        if (myself->name)
++                gsh_free(myself->name);
++        myself->name = gsh_strdup("PSEUDO");
+ }

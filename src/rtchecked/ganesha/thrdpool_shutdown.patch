@@ -1,0 +1,20 @@
+--- nfs-ganesha-2.1.0-0.1.1-Source/libntirpc/src/thrdpool.c	2015-06-10 11:44:29.520319280 +0300
++++ nfs-ganesha-2.1.0-0.1.1-Source.new/libntirpc/src/thrdpool.c	2015-06-10 12:46:09.856280815 +0300
+@@ -148,8 +148,8 @@ static void *thrdpool_start_routine(void
+ 
+ 	/* cleanup thread context */
+ 	destroy_wait_entry(&thrd->ctx.we);
+-	--(thrd->pool->n_threads);
+ 	mutex_lock(&pool->we.mtx);
++	--(pool->n_threads);
+ 	cond_signal(&pool->we.cv);
+ 	mutex_unlock(&pool->we.mtx);
+ 	mem_free(thrd, 0);
+@@ -187,6 +187,7 @@ static inline bool thrdpool_spawn(struct
+ 	    pthread_create(&thrd->ctx.id, &pool->attr, thrdpool_start_routine,
+ 			   thrd);
+ 	if (code != 0) {
++        --(pool->n_threads);
+ 		__warnx(TIRPC_DEBUG_FLAG_SVC_VC, "pthread_create failed %d\n",
+ 			__func__, errno);
+ 	}

@@ -1,0 +1,521 @@
+diff -upraN include.orig/ganesha/avltree.h include.new/ganesha/avltree.h
+--- include.orig/ganesha/avltree.h	2015-03-03 16:38:08.045328159 +0200
++++ include.new/ganesha/avltree.h	2015-03-04 15:50:36.156459672 +0200
+@@ -90,7 +90,7 @@ struct bstree_node *bstree_lookup(const
+ struct bstree_node *bstree_insert(struct bstree_node *node,
+ 				  struct bstree *tree);
+ void bstree_remove(struct bstree_node *node, struct bstree *tree);
+-void bstree_replace(struct bstree_node *old, struct bstree_node *new,
++void bstree_replace(struct bstree_node *old, struct bstree_node *new_,
+ 		    struct bstree *tree);
+ int bstree_init(struct bstree *tree, bstree_cmp_fn_t cmp, unsigned long flags);
+ 
+@@ -139,7 +139,7 @@ struct rbtree_node *rbtree_lookup(const
+ struct rbtree_node *rbtree_insert(struct rbtree_node *node,
+ 				  struct rbtree *tree);
+ void rbtree_remove(struct rbtree_node *node, struct rbtree *tree);
+-void rbtree_replace(struct rbtree_node *old, struct rbtree_node *new,
++void rbtree_replace(struct rbtree_node *old, struct rbtree_node *new_,
+ 		    struct rbtree *tree);
+ int rbtree_init(struct rbtree *tree, rbtree_cmp_fn_t cmp, unsigned long flags);
+ 
+@@ -191,7 +191,7 @@ struct avltree_node *avltree_sup(const s
+ struct avltree_node *avltree_insert(struct avltree_node *node,
+ 				    struct avltree *tree);
+ void avltree_remove(struct avltree_node *node, struct avltree *tree);
+-void avltree_replace(struct avltree_node *old, struct avltree_node *new,
++void avltree_replace(struct avltree_node *old, struct avltree_node *new_,
+ 		     struct avltree *tree);
+ int avltree_init(struct avltree *tree, avltree_cmp_fn_t cmp,
+ 		 unsigned long flags);
+@@ -235,7 +235,7 @@ struct splaytree_node *splaytree_lookup(
+ struct splaytree_node *splaytree_insert(struct splaytree_node *node,
+ 					struct splaytree *tree);
+ void splaytree_remove(struct splaytree_node *node, struct splaytree *tree);
+-void splaytree_replace(struct splaytree_node *old, struct splaytree_node *new,
++void splaytree_replace(struct splaytree_node *old, struct splaytree_node *new_,
+ 		       struct splaytree *tree);
+ int splaytree_init(struct splaytree *tree, splaytree_cmp_fn_t cmp,
+ 		   unsigned long flags);
+diff -upraN include.orig/ganesha/cache_inode.h include.new/ganesha/cache_inode.h
+--- include.orig/ganesha/cache_inode.h	2015-03-03 16:38:08.001328159 +0200
++++ include.new/ganesha/cache_inode.h	2015-03-04 17:16:55.576405832 +0200
+@@ -348,7 +348,7 @@ struct entry_export_map {
+ 	/** The relevant cache inode entry */
+ 	cache_entry_t *entry;
+ 	/** The export the entry belongs to */
+-	struct gsh_export *export;
++	struct gsh_export *export_;
+ 	/** List of entries per export */
+ 	struct glist_head entry_per_export;
+ 	/** List of exports per entry */
+@@ -522,7 +522,7 @@ struct cache_entry_t {
+  */
+ 
+ typedef struct cache_inode_fsal_data {
+-	struct fsal_export *export;	/*< export owning this handle */
++	struct fsal_export *export_;	/*< export owning this handle */
+ 	struct gsh_buffdesc fh_desc;	/*< FSAL handle descriptor  */
+ } cache_inode_fsal_data_t;
+ 
+@@ -681,7 +681,7 @@ cache_inode_status_t cache_inode_init(vo
+ #define CIG_KEYED_FLAG_CACHED_ONLY  0x0001
+ 
+ bool check_mapping(cache_entry_t *entry,
+-		   struct gsh_export *export);
++		   struct gsh_export *export_);
+ void clean_mapping(cache_entry_t *entry);
+ cache_inode_status_t cache_inode_get(cache_inode_fsal_data_t *fsdata,
+ 				     cache_entry_t **entry);
+@@ -695,7 +695,7 @@ cache_inode_get_protected(cache_entry_t
+ 							 void *),
+ 			  void *source);
+ void cache_inode_put(cache_entry_t *entry);
+-void cache_inode_unexport(struct gsh_export *export);
++void cache_inode_unexport(struct gsh_export *export_);
+ 
+ cache_inode_status_t cache_inode_access_sw(cache_entry_t *entry,
+ 					   fsal_accessflags_t access_type,
+diff -upraN include.orig/ganesha/common_utils.h include.new/ganesha/common_utils.h
+--- include.orig/ganesha/common_utils.h	2015-03-03 16:38:08.009328159 +0200
++++ include.new/ganesha/common_utils.h	2015-03-04 16:16:24.032443582 +0200
+@@ -276,7 +276,7 @@ timespec_add_nsecs(nsecs_elapsed_t inter
+ {
+ 	timespec->tv_sec += (interval / NS_PER_SEC);
+ 	timespec->tv_nsec += (interval % NS_PER_SEC);
+-	if (timespec->tv_nsec > NS_PER_SEC) {
++	if ((nsecs_elapsed_t)timespec->tv_nsec > NS_PER_SEC) {
+ 		timespec->tv_sec += (timespec->tv_nsec / NS_PER_SEC);
+ 		timespec->tv_nsec = timespec->tv_nsec % NS_PER_SEC;
+ 	}
+@@ -368,7 +368,7 @@ static inline void now(struct timespec *
+ 
+ static inline int strmaxcpy(char *dest, const char *src, size_t dest_size)
+ {
+-	int len = strlen(src);
++	size_t len = strlen(src);
+ 	if (len >= dest_size)
+ 		return -1;
+ 
+diff -upraN include.orig/ganesha/config_parsing.h include.new/ganesha/config_parsing.h
+--- include.orig/ganesha/config_parsing.h	2015-03-03 16:38:08.061328159 +0200
++++ include.new/ganesha/config_parsing.h	2015-03-04 15:41:56.588465073 +0200
+@@ -82,7 +82,7 @@ struct config_error_type {
+ 	bool parse:1;		/*< parser rules */
+ 	bool init:1;		/*< block initialization */
+ 	bool fsal:1;		/*< fsal load failure */
+-	bool export:1;		/*< export create failure */
++	bool export_:1;		/*< export create failure */
+ 	bool resource:1;	/*< system resource */
+ 	bool unique:1;		/*< unique block/param */
+ 	bool invalid:1;		/*< invalid param value */
+@@ -113,7 +113,7 @@ static inline bool config_error_is_fatal
+ static inline bool config_error_is_crit(struct config_error_type *err_type)
+ {
+ 	return config_error_is_fatal(err_type) ||
+-		(err_type->invalid || err_type->export || err_type->missing);
++		(err_type->invalid || err_type->export_ || err_type->missing);
+ }
+ 
+ /**
+diff -upraN include.orig/ganesha/display.h include.new/ganesha/display.h
+--- include.orig/ganesha/display.h	2015-03-03 16:38:08.005328159 +0200
++++ include.new/ganesha/display.h	2015-03-04 16:14:16.612444906 +0200
+@@ -124,7 +124,7 @@ static inline void display_reset_buffer(
+  */
+ static inline int display_buffer_len(struct display_buffer *dspbuf)
+ {
+-	int len = dspbuf->b_current - dspbuf->b_start;
++	size_t len = dspbuf->b_current - dspbuf->b_start;
+ 	if (len == dspbuf->b_size) {
+ 		/* Buffer has overflowed, due to forced overflow or partial
+ 		 * UTF-8 fixup, the actual string length might actually be less
+diff -upraN include.orig/ganesha/export_mgr.h include.new/ganesha/export_mgr.h
+--- include.orig/ganesha/export_mgr.h	2015-03-03 16:38:08.041328159 +0200
++++ include.new/ganesha/export_mgr.h	2015-03-04 17:15:35.416406665 +0200
+@@ -135,8 +135,8 @@ void export_pkginit(void);
+ void dbus_export_init(void);
+ #endif
+ struct gsh_export *alloc_export(void);
+-void free_export(struct gsh_export *export);
+-bool insert_gsh_export(struct gsh_export *export);
++void free_export(struct gsh_export *export_);
++bool insert_gsh_export(struct gsh_export *export_);
+ struct gsh_export *get_gsh_export(uint16_t export_id);
+ struct gsh_export *get_gsh_export_by_path(char *path, bool exact_match);
+ struct gsh_export *get_gsh_export_by_path_locked(char *path,
+@@ -146,8 +146,8 @@ struct gsh_export *get_gsh_export_by_pse
+ 						   bool exact_match);
+ struct gsh_export *get_gsh_export_by_tag(char *tag);
+ bool mount_gsh_export(struct gsh_export *exp);
+-void set_gsh_export_state(struct gsh_export *export, export_state_t state);
+-void put_gsh_export(struct gsh_export *export);
++void set_gsh_export_state(struct gsh_export *export_, export_state_t state);
++void put_gsh_export(struct gsh_export *export_);
+ void remove_gsh_export(uint16_t export_id);
+ bool foreach_gsh_export(bool(*cb) (struct gsh_export *exp, void *state),
+ 			void *state);
+@@ -157,9 +157,9 @@ static inline void get_gsh_export_ref(st
+ 	atomic_inc_int64_t(&exp->refcnt);
+ }
+ 
+-void export_add_to_mount_work(struct gsh_export *export);
+-void export_add_to_unexport_work_locked(struct gsh_export *export);
+-void export_add_to_unexport_work(struct gsh_export *export);
++void export_add_to_mount_work(struct gsh_export *export_);
++void export_add_to_unexport_work_locked(struct gsh_export *export_);
++void export_add_to_unexport_work(struct gsh_export *export_);
+ struct gsh_export *export_take_mount_work(void);
+ struct gsh_export *export_take_unexport_work(void);
+ 
+diff -upraN include.orig/ganesha/FSAL/fsal_commonlib.h include.new/ganesha/FSAL/fsal_commonlib.h
+--- include.orig/ganesha/FSAL/fsal_commonlib.h	2015-03-03 16:38:08.073328159 +0200
++++ include.new/ganesha/FSAL/fsal_commonlib.h	2015-05-25 18:33:24.314434357 +0300
+@@ -52,7 +52,7 @@ void fsal_detach_export(struct fsal_modu
+ /* fsal_export common methods
+  */
+ 
+-int fsal_export_init(struct fsal_export *export);
++int fsal_export_init(struct fsal_export *export_);
+ 
+ void free_export_ops(struct fsal_export *exp_hdl);
+ 
+@@ -74,12 +74,12 @@ void fsal_ds_handle_uninit(struct fsal_d
+ 
+ int open_dir_by_path_walk(int first_fd, const char *path, struct stat *stat);
+ 
+-struct avltree avl_fsid;
+-struct avltree avl_dev;
++extern struct avltree avl_fsid;
++extern struct avltree avl_dev;
+ 
+-struct glist_head posix_file_systems;
++extern struct glist_head posix_file_systems;
+ 
+-pthread_rwlock_t fs_lock;
++//pthread_rwlock_t fs_lock;
+ 
+ void free_fs(struct fsal_filesystem *fs);
+ 
+@@ -105,7 +105,7 @@ struct fsal_filesystem *lookup_fsid(stru
+ 				    enum fsid_type fsid_type);
+ struct fsal_filesystem *lookup_dev(struct fsal_dev__ *dev);
+ 
+-void unclaim_fs(struct fsal_filesystem *this);
++void unclaim_fs(struct fsal_filesystem *this_);
+ 
+ int claim_posix_filesystems(const char *path,
+ 			    struct fsal_module *fsal,
+diff -upraN include.orig/ganesha/fsal_api.h include.new/ganesha/fsal_api.h
+--- include.orig/ganesha/fsal_api.h	2015-03-03 16:38:08.069328159 +0200
++++ include.new/ganesha/fsal_api.h	2015-03-04 15:51:55.052458852 +0200
+@@ -562,11 +562,11 @@ struct fsal_ops {
+ 
+ static inline void fsal_put(struct fsal_module *fsal_hdl)
+ {
+-	int32_t refcount;
++	uint32_t refcount;
+ 
+-	refcount = atomic_dec_int32_t(&fsal_hdl->refcount);
++	refcount = atomic_dec_uint32_t(&fsal_hdl->refcount);
+ 
+-	assert(refcount >= 0);
++//	assert(refcount >= 0);
+ 
+ 	if (refcount == 0) {
+ 		LogInfo(COMPONENT_FSAL,
+@@ -1193,7 +1193,7 @@ struct fsal_filesystem {
+ 	struct fsal_fsid__ fsid;	/*< file system id */
+ 	struct avltree_node avl_fsid;	/*< AVL indexed by fsid */
+ 	struct avltree_node avl_dev;	/*< AVL indexed by dev */
+-	void *private;			/*< Private data for owning FSAL */
++	void *private_;			/*< Private data for owning FSAL */
+ 	char *path;			/*< Path to root of this file system */
+ 	char *device;			/*< Path to block device */
+ 	char *type;			/*< fs type */
+diff -upraN include.orig/ganesha/fsal.h include.new/ganesha/fsal.h
+--- include.orig/ganesha/fsal.h	2015-03-03 16:38:08.025328159 +0200
++++ include.new/ganesha/fsal.h	2015-03-17 12:50:33.648691563 +0200
+@@ -79,7 +79,7 @@
+  *  ReturnCode :
+  *  Macro for returning a fsal_status_t without trace nor stats increment.
+  */
+-static inline fsal_status_t fsalstat(fsal_errors_t major, uint32_t minor)
++static inline fsal_status_t fsalstat(fsal_errors_t major, int minor)
+ {
+ 	fsal_status_t status = {major, minor};
+ 	return status;
+diff -upraN include.orig/ganesha/fsal_pnfs.h include.new/ganesha/fsal_pnfs.h
+--- include.orig/ganesha/fsal_pnfs.h	2015-03-03 16:38:08.025328159 +0200
++++ include.new/ganesha/fsal_pnfs.h	2015-05-25 18:33:41.518434178 +0300
+@@ -116,12 +116,13 @@ enum fsal_id {
+ 	FSAL_ID_CEPH = 4,
+ 	FSAL_ID_LUSTRE = 5,
+ 	FSAL_ID_GLUSTER = 6,
++    FSAL_ID_OVS_FILESYSTEM = 7,
+ 	FSAL_ID_COUNT
+ };
+ 
+ struct fsal_module;
+ 
+-struct fsal_module *pnfs_fsal[FSAL_ID_COUNT];
++//struct fsal_module *pnfs_fsal[FSAL_ID_COUNT];
+ 
+ /**
+  * @brief FSAL view of the NFSv4.1 deviceid4.
+diff -upraN include.orig/ganesha/fsal_types.h include.new/ganesha/fsal_types.h
+--- include.orig/ganesha/fsal_types.h	2015-03-03 16:38:08.077328159 +0200
++++ include.new/ganesha/fsal_types.h	2015-05-25 18:32:39.278434825 +0300
+@@ -159,7 +159,7 @@ struct req_op_context {
+ 	uint32_t nfs_minorvers;	/*< NFSv4 minor version */
+ 	uint32_t req_type;	/*< request_type NFS | 9P */
+ 	struct gsh_client *client;	/*< client host info including stats */
+-	struct gsh_export *export;	/*< current export */
++	struct gsh_export *export_;	/*< current export */
+ 	struct fsal_export *fsal_export;	/*< current fsal export */
+ 	struct export_perms *export_perms;	/*< Effective export perms */
+ 	nsecs_elapsed_t start_time;	/*< start time of this op/request */
+@@ -202,8 +202,8 @@ struct root_op_context {
+ };
+ 
+ /* Expor permissions for root op context, defined in protocol layer */
+-uint32_t root_op_export_options;
+-uint32_t root_op_export_set;
++extern uint32_t root_op_export_options;
++extern uint32_t root_op_export_set;
+ 
+ static inline void init_root_op_context(struct root_op_context *ctx,
+ 					struct gsh_export *exp,
+@@ -220,7 +220,7 @@ static inline void init_root_op_context(
+ 	ctx->req_ctx.nfs_vers = nfs_vers;
+ 	ctx->req_ctx.nfs_minorvers = nfs_minorvers;
+ 	ctx->req_ctx.req_type = req_type;
+-	ctx->req_ctx.export = exp;
++	ctx->req_ctx.export_ = exp;
+ 	ctx->req_ctx.fsal_export = fsal_exp;
+ 	ctx->req_ctx.export_perms = &ctx->export_perms;
+ 	ctx->export_perms.set = root_op_export_set;
+@@ -571,12 +571,12 @@ typedef enum {
+ 
+ static inline fsal_accessflags_t FSAL_MODE_MASK(fsal_accessflags_t access)
+ {
+-	return access & FSAL_MODE_BIT_MASK;
++	return (fsal_accessflags_t)(access & FSAL_MODE_BIT_MASK);
+ }
+ 
+ static inline fsal_accessflags_t FSAL_ACE4_MASK(fsal_accessflags_t access)
+ {
+-	return access & FSAL_ACE4_BIT_MASK;
++	return (fsal_accessflags_t)(access & FSAL_ACE4_BIT_MASK);
+ }
+ 
+ #define FSAL_MODE_MASK_SET(access) (access | FSAL_MODE_MASK_FLAG)
+diff -upraN include.orig/ganesha/ganesha_list.h include.new/ganesha/ganesha_list.h
+--- include.orig/ganesha/ganesha_list.h	2015-03-03 16:38:08.061328159 +0200
++++ include.new/ganesha/ganesha_list.h	2015-03-04 15:44:38.296463392 +0200
+@@ -56,25 +56,25 @@ static inline void glist_init(struct gli
+ 
+ /* Add the new element between left and right */
+ static inline void __glist_add(struct glist_head *left,
+-			       struct glist_head *right, struct glist_head *new)
++			       struct glist_head *right, struct glist_head *new_)
+ {
+-	new->prev = left;
+-	new->next = right;
+-	left->next = new;
+-	right->prev = new;
++	new_->prev = left;
++	new_->next = right;
++	left->next = new_;
++	right->prev = new_;
+ }
+ 
+ static inline void glist_add_tail(struct glist_head *head,
+-				  struct glist_head *new)
++				  struct glist_head *new_)
+ {
+ 
+-	__glist_add(head->prev, head, new);
++	__glist_add(head->prev, head, new_);
+ }
+ 
+ /* add after the specified entry*/
+-static inline void glist_add(struct glist_head *head, struct glist_head *new)
++static inline void glist_add(struct glist_head *head, struct glist_head *new_)
+ {
+-	__glist_add(head, head->next, new);
++	__glist_add(head, head->next, new_);
+ }
+ 
+ static inline void glist_del(struct glist_head *node)
+@@ -110,12 +110,12 @@ static inline int glist_null(struct glis
+ }
+ 
+ static inline void glist_add_list_tail(struct glist_head *list,
+-				       struct glist_head *new)
++				       struct glist_head *new_)
+ {
+-	struct glist_head *first = new->next;
+-	struct glist_head *last = new->prev;
++	struct glist_head *first = new_->next;
++	struct glist_head *last = new_->prev;
+ 
+-	if (glist_empty(new)) {
++	if (glist_empty(new_)) {
+ 		/* nothing to add */
+ 		return;
+ 	}
+diff -upraN include.orig/ganesha/ganesha_rpc.h include.new/ganesha/ganesha_rpc.h
+--- include.orig/ganesha/ganesha_rpc.h	2015-03-03 16:38:08.117328158 +0200
++++ include.new/ganesha/ganesha_rpc.h	2015-03-09 11:01:44.420149175 +0200
+@@ -158,9 +158,10 @@ typedef struct gsh_xprt_private {
+ } gsh_xprt_private_t;
+ 
+ static inline gsh_xprt_private_t *alloc_gsh_xprt_private(SVCXPRT *xprt,
+-							 uint32_t flags)
++							 uint32_t /*flags*/)
+ {
+-	gsh_xprt_private_t *xu = gsh_malloc(sizeof(gsh_xprt_private_t));
++	gsh_xprt_private_t *xu =
++        (gsh_xprt_private_t*)gsh_malloc(sizeof(gsh_xprt_private_t));
+ 
+ 	xu->xprt = xprt;
+ 	xu->flags = XPRT_PRIVATE_FLAG_NONE;
+diff -upraN include.orig/ganesha/log.h include.new/ganesha/log.h
+--- include.orig/ganesha/log.h	2015-03-03 16:38:08.113328158 +0200
++++ include.new/ganesha/log.h	2015-03-11 13:28:05.222261633 +0200
+@@ -145,11 +145,19 @@ void Fatal(void);
+  */
+ void SetComponentLogLevel(log_components_t component, int level_to_set);
+ 
++#ifdef __cplusplus
++void DisplayLogComponentLevel(log_components_t component, char *file, int line,
++			      char *function, log_levels_t level, const char *format,
++			      ...)
++			      __attribute__ ((format(printf, 6, 7)));
++			      /* 6=format 7=params */
++#else
+ void DisplayLogComponentLevel(log_components_t component, char *file, int line,
+ 			      char *function, log_levels_t level, char *format,
+ 			      ...)
+ 			      __attribute__ ((format(printf, 6, 7)));
+ 			      /* 6=format 7=params */
++#endif
+ 
+ int read_log_config(config_file_t in_config);
+ void reread_log_config();
+@@ -173,7 +181,7 @@ typedef enum log_header_t {
+  * @brief Prototype for special log facility logging functions
+  */
+ 
+-typedef int (lf_function_t) (log_header_t headers, void *private,
++typedef int (lf_function_t) (log_header_t headers, void *private_,
+ 			     log_levels_t level,
+ 			     struct display_buffer *buffer, char *compstr,
+ 			     char *message);
+@@ -182,7 +190,7 @@ int create_log_facility(char *name,
+ 			lf_function_t *log_func,
+ 			log_levels_t max_level,
+ 			log_header_t header,
+-			void *private);
++			void *private_);
+ void release_log_facility(char *name);
+ int enable_log_facility(char *name);
+ int disable_log_facility(char *name);
+diff -upraN include.orig/ganesha/nfs_exports.h include.new/ganesha/nfs_exports.h
+--- include.orig/ganesha/nfs_exports.h	2015-03-03 16:38:08.105328158 +0200
++++ include.new/ganesha/nfs_exports.h	2015-03-04 17:15:05.156406980 +0200
+@@ -318,12 +318,12 @@ bool init_export_root(struct gsh_export
+ 
+ cache_inode_status_t nfs_export_get_root_entry(struct gsh_export *exp,
+ 					       cache_entry_t **entry);
+-void unexport(struct gsh_export *export);
++void unexport(struct gsh_export *export_);
+ void kill_export_root_entry(cache_entry_t *entry);
+ void kill_export_junction_entry(cache_entry_t *entry);
+ 
+ int ReadExports(config_file_t in_config);
+-void free_export_resources(struct gsh_export *export);
++void free_export_resources(struct gsh_export *export_);
+ void exports_pkginit(void);
+ 
+ #endif				/* !NFS_EXPORTS_H */
+diff -upraN include.orig/ganesha/nfsv41.h include.new/ganesha/nfsv41.h
+--- include.orig/ganesha/nfsv41.h	2015-03-03 16:38:08.017328159 +0200
++++ include.new/ganesha/nfsv41.h	2015-03-04 15:49:14.600460520 +0200
+@@ -9140,7 +9140,7 @@ extern "C" {
+ 			return false;
+ 		return true;
+ 	}
+-
++#if 0
+ #if 0
+ 	static inline bool xdr_nfs_ftype4(XDR *, nfs_ftype4 *);
+ 	static inline bool xdr_nfsstat4(XDR *, nfsstat4 *);
+@@ -10102,6 +10102,7 @@ extern "C" {
+ 	static inline bool xdr_CB_COMPOUND4res();
+ 
+ #endif				/* 0 */
++#endif
+ #endif				/* K&R C */
+ 
+ #ifdef __cplusplus
+diff -upraN include.orig/ntirpc/misc/rbtree_x.h include.new/ntirpc/misc/rbtree_x.h
+--- include.orig/ntirpc/misc/rbtree_x.h	2015-03-03 16:38:29.713327934 +0200
++++ include.new/ntirpc/misc/rbtree_x.h	2015-03-11 13:13:32.714270703 +0200
+@@ -1,4 +1,3 @@
+-
+ #ifndef _RBTREE_X_H
+ #define _RBTREE_X_H
+ 
+@@ -7,6 +6,16 @@
+ #include <misc/stdio.h>
+ #include <misc/rbtree.h>
+ 
++#ifdef __cplusplus
++extern "C"
++{
++#undef PRIx64
++#define PRIx64 "%d"
++#include <cinttypes>
++}
++#endif
++
++
+ struct rbtree_x_part {
+ 	CACHE_PAD(0);
+ 	pthread_rwlock_t lock;
+diff -upraN include.orig/ntirpc/rpc/gss_internal.h include.new/ntirpc/rpc/gss_internal.h
+--- include.orig/ntirpc/rpc/gss_internal.h	2015-03-03 16:38:29.709327934 +0200
++++ include.new/ntirpc/rpc/gss_internal.h	2015-03-04 15:43:54.044463852 +0200
+@@ -58,7 +58,7 @@ extern SVCAUTH svc_auth_none;
+  * from mit-krb5-1.2.1 mechglue/mglueP.h:
+  * Array of context IDs typed by mechanism OID
+  */
+-typedef struct gss_union_ctx_id_t {
++typedef struct gss_union_ctx_id_tag {
+ 	gss_OID mech_type;
+ 	gss_ctx_id_t internal_ctx_id;
+ } gss_union_ctx_id_desc, *gss_union_ctx_id_t;
+@@ -101,7 +101,7 @@ static inline struct
+ svc_rpc_gss_data *alloc_svc_rpc_gss_data(void)
+ {
+ 	struct svc_rpc_gss_data *gd =
+-		mem_zalloc(sizeof(struct svc_rpc_gss_data));
++		(struct svc_rpc_gss_data*)mem_zalloc(sizeof(struct svc_rpc_gss_data));
+ 	mutex_init(&gd->lock, NULL);
+ 	TAILQ_INIT_ENTRY(gd, lru_q);
+ 	gd->refcnt = 1;
+diff -upraN include.orig/ntirpc/rpc/rpcent.h include.new/ntirpc/rpc/rpcent.h
+--- include.orig/ntirpc/rpc/rpcent.h	2015-03-03 16:38:29.713327934 +0200
++++ include.new/ntirpc/rpc/rpcent.h	2015-03-09 20:12:05.419805920 +0200
+@@ -67,7 +67,7 @@ extern struct rpcent *getrpcbynumber(int
+ extern struct rpcent *getrpcent(void);
+ #endif
+ 
+-extern void setrpcent(int);
+-extern void endrpcent(void);
++extern void setrpcent(int) __THROW;
++extern void endrpcent(void) __THROW;
+ __END_DECLS
+ #endif				/* !_RPC_CENT_H */

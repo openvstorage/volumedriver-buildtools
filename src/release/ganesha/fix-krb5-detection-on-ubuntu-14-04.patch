@@ -1,0 +1,28 @@
+--- nfs-ganesha-2.1.0-0.1.1-Source/cmake/modules/FindKrb5.cmake	2014-02-20 14:46:22.000000000 +0200
++++ nfs-ganesha-2.1.0-0.1.1-Source.new/cmake/modules/FindKrb5.cmake	2015-03-03 16:18:40.057340300 +0200
+@@ -96,7 +96,7 @@ IF(KRB5_FOUND)
+       KRB5_C_CONFIG_LIBS "${KRB5_C_CONFIG_LIBS}")
+ 
+     # Look for -L flags for directories and -l flags for library names.
+-    SET(KRB5_LIBRARY_DIRS)
++    SET(KRB5_LIBRARY_DIRS "/usr/lib/x86_64-linux-gnu")
+     SET(KRB5_LIBRARY_NAMES)
+     FOREACH(flag ${KRB5_C_CONFIG_LIBS})
+       IF("${flag}" MATCHES "^-L")
+@@ -113,6 +113,8 @@ IF(KRB5_FOUND)
+     SET(KRB5_LIBRARY_NAMES ${KRB5_LIBRARY_NAMES} "gssapi_krb5")
+ 
+     # Search for each library needed using the directories given.
++     MESSAGE(STATUS "looking for ${KRB5_LIBRARY_NAMES} in ${KRB5_LIBRARY_DIRS}")
++
+     FOREACH(name ${KRB5_LIBRARY_NAMES})
+       # Look for this library.
+       FIND_LIBRARY(KRB5_${name}_LIBRARY
+@@ -125,6 +127,7 @@ IF(KRB5_FOUND)
+ 
+       # If any library is not found then the whole package is not found.
+       IF(NOT KRB5_${name}_LIBRARY)
++       MESSAGE(STATUS "KRB5_${name}_LIBRARY not found")
+         SET(KRB5_FOUND 0)
+       ENDIF(NOT KRB5_${name}_LIBRARY)
+ 

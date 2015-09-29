@@ -1,0 +1,45 @@
+diff -ru nfs-ganesha-2.1.0-0.1.1-Source.org/SAL/nfs4_state_id.c nfs-ganesha-2.1.0-0.1.1-Source/SAL/nfs4_state_id.c
+--- nfs-ganesha-2.1.0-0.1.1-Source.org/SAL/nfs4_state_id.c	2014-06-20 07:27:57.000000000 +0000
++++ nfs-ganesha-2.1.0-0.1.1-Source/SAL/nfs4_state_id.c	2015-09-11 14:35:41.250731903 +0000
+@@ -154,7 +154,7 @@
+  *
+  * @param[in] stateid Array aliased to stateid
+  */
+-inline uint32_t compute_stateid_hash_value(uint32_t *stateid)
++static inline uint32_t compute_stateid_hash_value(uint32_t *stateid)
+ {
+ 	return stateid[1] ^ stateid[2];
+ }
+diff -ru nfs-ganesha-2.1.0-0.1.1-Source.org/SAL/state_lock.c nfs-ganesha-2.1.0-0.1.1-Source/SAL/state_lock.c
+--- nfs-ganesha-2.1.0-0.1.1-Source.org/SAL/state_lock.c	2014-06-20 07:27:57.000000000 +0000
++++ nfs-ganesha-2.1.0-0.1.1-Source/SAL/state_lock.c	2015-09-11 14:34:59.158729614 +0000
+@@ -611,7 +611,7 @@
+  *
+  * @return New entry or NULL.
+  */
+-inline state_lock_entry_t *state_lock_entry_t_dup(state_lock_entry_t *
++static inline state_lock_entry_t *state_lock_entry_t_dup(state_lock_entry_t *
+ 						  orig_entry)
+ {
+ 	return create_state_lock_entry(orig_entry->sle_entry,
+@@ -2092,7 +2092,7 @@
+  *
+  * @return The human-readable string.
+  */
+-inline const char *fsal_lock_op_str(fsal_lock_op_t op)
++static inline const char *fsal_lock_op_str(fsal_lock_op_t op)
+ {
+ 	switch (op) {
+ 	case FSAL_OP_LOCKT:
+diff -ru nfs-ganesha-2.1.0-0.1.1-Source.org/log/log_functions.c nfs-ganesha-2.1.0-0.1.1-Source/log/log_functions.c
+--- nfs-ganesha-2.1.0-0.1.1-Source.org/log/log_functions.c	2014-06-20 07:27:57.000000000 +0000
++++ nfs-ganesha-2.1.0-0.1.1-Source/log/log_functions.c	2015-09-11 14:36:55.506735943 +0000
+@@ -493,7 +493,7 @@
+ 	}
+ }
+ 
+-inline int ReturnLevelDebug()
++static inline int ReturnLevelDebug()
+ {
+ 	return component_log_level[COMPONENT_ALL];
+ }				/* ReturnLevelDebug */

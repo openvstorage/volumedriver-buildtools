@@ -1,0 +1,19 @@
+diff -rupN fuse-2.9.3.old/lib/fuse_misc.h fuse-2.9.3/lib/fuse_misc.h
+--- fuse-2.9.3.old/lib/fuse_misc.h	2013-07-01 09:40:39.000000000 +0200
++++ fuse-2.9.3/lib/fuse_misc.h	2013-09-25 09:09:17.383737595 +0200
+@@ -14,11 +14,11 @@
+     - confuse the dynamic linker in uClibc
+     - not supported on MacOSX (in MachO binary format)
+ */
+-#if (!defined(__UCLIBC__) && !defined(__APPLE__))
+-#define FUSE_SYMVER(x) __asm__(x)
+-#else
++/* #if (!defined(__UCLIBC__) && !defined(__APPLE__)) */
++/* #define FUSE_SYMVER(x) __asm__(x) */
++/* #else */
+ #define FUSE_SYMVER(x)
+-#endif
++/* #endif */
+ 
+ #ifndef USE_UCLIBC
+ #define fuse_mutex_init(mut) pthread_mutex_init(mut, NULL)

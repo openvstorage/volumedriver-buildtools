@@ -1,0 +1,15 @@
+Source: ganesha-cf
+Section: unknown
+Priority: extra
+Maintainer: volumedriverteam@cloudfounders.com
+Build-Depends: debhelper (>= 7.0.0)
+Standards-Version: 3.9.2
+Homepage: www.cloudfounders.com
+
+Package: ganesha-cf
+Architecture: any
+Depends: ${shlibs:Depends}
+Conflicts: ganesha-cf
+Description: Ganesha debian packaged for use with OVS.
+
+

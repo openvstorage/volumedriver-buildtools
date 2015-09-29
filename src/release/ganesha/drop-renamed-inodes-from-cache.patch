@@ -1,0 +1,61 @@
+--- nfs-ganesha-2.1.0-0.1.1-Source/cache_inode/cache_inode_rename.c	2014-06-20 10:27:57.000000000 +0300
++++ nfs-ganesha-2.1.0-0.1.1-Source.new/cache_inode/cache_inode_rename.c	2015-03-03 16:12:51.589343923 +0200
+@@ -336,14 +336,7 @@ cache_inode_rename(cache_entry_t *dir_sr
+ 			 "directory  the same", dir_src, oldname, dir_dest,
+ 			 newname);
+ 
+-		cache_inode_status_t tmp_status =
+-		    cache_inode_rename_cached_dirent(dir_dest,
+-						     oldname, newname);
+-		if (tmp_status != CACHE_INODE_SUCCESS) {
+-			/* We're obviously out of date.  Throw out the cached
+-			   directory */
+-			cache_inode_invalidate_all_cached_dirent(dir_dest);
+-		}
++		cache_inode_invalidate_all_cached_dirent(dir_dest);
+ 	} else {
+ 		cache_inode_status_t tmp_status = CACHE_INODE_SUCCESS;
+ 
+@@ -351,40 +344,8 @@ cache_inode_rename(cache_entry_t *dir_sr
+ 			 "Rename (%p,%s)->(%p,%s) : moving entry", dir_src,
+ 			 oldname, dir_dest, newname);
+ 
+-		/* We may have a cache entry for the destination
+-		 * filename.  If we do, we must delete it : it is stale. */
+-		tmp_status =
+-		    cache_inode_remove_cached_dirent(dir_dest, newname);
+-
+-		if (tmp_status != CACHE_INODE_SUCCESS
+-		    && tmp_status != CACHE_INODE_NOT_FOUND) {
+-			LogDebug(COMPONENT_CACHE_INODE,
+-				 "Remove stale dirent returned %s",
+-				 cache_inode_err_str(tmp_status));
+-			cache_inode_invalidate_all_cached_dirent(dir_dest);
+-		}
+-
+-		tmp_status =
+-		    cache_inode_add_cached_dirent(dir_dest, newname, lookup_src,
+-						  NULL);
+-		if (tmp_status != CACHE_INODE_SUCCESS) {
+-			/* We're obviously out of date.  Throw out the cached
+-			   directory */
+-			LogCrit(COMPONENT_CACHE_INODE, "Add dirent returned %s",
+-				cache_inode_err_str(tmp_status));
+-			cache_inode_invalidate_all_cached_dirent(dir_dest);
+-		}
+-
+-		/* Remove the old entry */
+-		tmp_status =
+-		    cache_inode_remove_cached_dirent(dir_src, oldname);
+-		if (tmp_status != CACHE_INODE_SUCCESS
+-		    && tmp_status != CACHE_INODE_NOT_FOUND) {
+-			LogDebug(COMPONENT_CACHE_INODE,
+-				 "Remove old dirent returned %s",
+-				 cache_inode_err_str(tmp_status));
+-			cache_inode_invalidate_all_cached_dirent(dir_src);
+-		}
++		cache_inode_invalidate_all_cached_dirent(dir_dest);
++		cache_inode_invalidate_all_cached_dirent(dir_src);
+ 	}
+ 
+ 	/* unlock entries */

@@ -1,0 +1,215 @@
+From 34a3739fbc102d225b4dac356e807cadfed58911 Mon Sep 17 00:00:00 2001
+From: Arne Redlich <arne.redlich@googlemail.com>
+Date: Wed, 13 May 2015 21:38:44 +0200
+Subject: [PATCH] Introduce a means to control the threads employed by the fuse
+ loop
+
+The current model is to
+* spawn a new thread when processing a request and all other threads are
+  busy so that the new thread can handle the next request
+* stop a thread after processing a command if there are more than 10
+  idle workers
+.
+
+With certain workloads this will lead to too many threads being spawned
+which will then get in each other's way ((spin)lock contention).
+
+This is a first stab at solving the problem which will have to be
+revisited especially since the affected code has changed on master.
+---
+ include/fuse.h          | 26 +++++++++++++++++++++++++-
+ include/fuse_lowlevel.h | 31 +++++++++++++++++++++++++++++++
+ lib/fuse_i.h            |  1 +
+ lib/fuse_loop_mt.c      | 24 ++++++++++++++++++++++--
+ lib/fuse_mt.c           | 18 ++++++++++++++++--
+ 5 files changed, 95 insertions(+), 5 deletions(-)
+
+diff --git a/include/fuse.h b/include/fuse.h
+index c657e67..9dd8783 100644
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -115,7 +115,7 @@ struct fuse_operations {
+ 	 */
+ 	int (*mknod) (const char *, mode_t, dev_t);
+ 
+-	/** Create a directory 
++	/** Create a directory
+ 	 *
+ 	 * Note that the mode argument may not have the type specification
+ 	 * bits set, i.e. S_ISDIR(mode) can be false.  To obtain the
+@@ -709,6 +709,30 @@ void fuse_exit(struct fuse *f);
+ int fuse_loop_mt(struct fuse *f);
+ 
+ /**
++ * FUSE event loop with multiple threads
++ *
++ * Requests from the kernel are processed, and the appropriate
++ * operations are called.  Request are processed in parallel by
++ * distributing them between multiple threads.
++ *
++ * This function gives the caller control over the the threads used by
++ * the fuse loop - see fuse_session_ops for more details.
++ *
++ * Calling this function requires the pthreads library to be linked to
++ * the application.
++ *
++ * @param f the FUSE handle
++ * @param worker_control_data private data that will be passed to the callbacks
++ * @param need_worker a callback that indicates whether a new worker is desired
++ * @param keep_worker a callback that indicates whether a worker is to be kept alive
++ * @return 0 if no error occurred, -1 otherwise
++ */
++int fuse_loop_mt_with_worker_control(struct fuse *f,
++                                     void *worker_control_data,
++				     int (*need_worker)(unsigned, unsigned, void *),
++				     int (*keep_worker)(unsigned, unsigned, void *));
++
++/**
+  * Get the current context
+  *
+  * The context is only valid for the duration of a filesystem
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index 2036717..aaa5cb0 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1550,6 +1550,37 @@ struct fuse_session_ops {
+ 	 * @param data user data passed to fuse_session_new()
+ 	 */
+ 	void (*destroy) (void *data);
++
++	/**
++	 * Hook to advise a multithreaded fuse loop to create a new worker (optional)
++	 *
++	 * If not specified, each time a request is processed and no thread remains
++	 * available (for the next request), a new worker is spawned.
++	 *
++	 * Note that this is called during request processing and with a mutex held
++	 * so it had better be inexpensive.
++	 *
++	 * @param available number of available workers
++	 * @param total total numer of workers
++         * @param userdata private data passed in when setting up the filesystem
++	 * @return 0 if no new worker shall be spawned, != 0 otherwise
++	 */
++	int (*need_worker)(unsigned available, unsigned total, void *userdata);
++
++	/**
++	 * Hook to advise a multithreaded fuse loop to keep a worker alive (optional)
++	 *
++	 * If not specified, fuse tries to keep 10 workers available.
++	 *
++	 * Note that this is called during request processing and with a mutex held
++	 * so it had better be inexpensive.
++	 *
++	 * @param available number of available workers
++	 * @param total total numer of workers
++         * @param userdata private data passed in when setting up the filesystem
++	 * @return 0 if no new worker shall be spawned, != 0 otherwise
++	 */
++	int (*keep_worker)(unsigned available, unsigned total, void *userdata);
+ };
+ 
+ /**
+diff --git a/lib/fuse_i.h b/lib/fuse_i.h
+index 78f1467..534581a 100644
+--- a/lib/fuse_i.h
++++ b/lib/fuse_i.h
+@@ -22,6 +22,7 @@ struct fuse_session {
+ 			    struct fuse_chan *ch);
+ 
+ 	void *data;
++	void *worker_control_data;
+ 
+ 	volatile int exited;
+ 
+diff --git a/lib/fuse_loop_mt.c b/lib/fuse_loop_mt.c
+index 7ae5890..15db5df 100644
+--- a/lib/fuse_loop_mt.c
++++ b/lib/fuse_loop_mt.c
+@@ -63,6 +63,26 @@ static void list_del_worker(struct fuse_worker *w)
+ 
+ static int fuse_loop_start_thread(struct fuse_mt *mt);
+ 
++static int need_worker(struct fuse_mt *mt)
++{
++	if (mt->se->op.need_worker)
++		return mt->se->op.need_worker(mt->numavail,
++					      mt->numworker,
++					      mt->se->worker_control_data);
++	else
++		return mt->numavail == 0;
++}
++
++static int keep_worker(struct fuse_mt *mt)
++{
++	if (mt->se->op.keep_worker)
++		return mt->se->op.keep_worker(mt->numavail,
++					      mt->numworker,
++					      mt->se->worker_control_data);
++	else
++		return mt->numavail <= 10;
++}
++
+ static void *fuse_do_work(void *data)
+ {
+ 	struct fuse_worker *w = (struct fuse_worker *) data;
+@@ -110,7 +130,7 @@ static void *fuse_do_work(void *data)
+ 
+ 		if (!isforget)
+ 			mt->numavail--;
+-		if (mt->numavail == 0)
++		if (need_worker(mt))
+ 			fuse_loop_start_thread(mt);
+ 		pthread_mutex_unlock(&mt->lock);
+ 
+@@ -119,7 +139,7 @@ static void *fuse_do_work(void *data)
+ 		pthread_mutex_lock(&mt->lock);
+ 		if (!isforget)
+ 			mt->numavail++;
+-		if (mt->numavail > 10) {
++		if (!keep_worker(mt)) {
+ 			if (mt->exit) {
+ 				pthread_mutex_unlock(&mt->lock);
+ 				return NULL;
+diff --git a/lib/fuse_mt.c b/lib/fuse_mt.c
+index f6dbe71..e216f8b 100644
+--- a/lib/fuse_mt.c
++++ b/lib/fuse_mt.c
+@@ -105,18 +105,32 @@ int fuse_loop_mt_proc(struct fuse *f, fuse_processor_t proc, void *data)
+ 	return res;
+ }
+ 
+-int fuse_loop_mt(struct fuse *f)
++int fuse_loop_mt_with_worker_control(struct fuse *f,
++				     void *worker_control_data,
++				     int (*need_worker)(unsigned, unsigned, void*),
++				     int (*keep_worker)(unsigned, unsigned, void*))
+ {
+ 	if (f == NULL)
+ 		return -1;
+ 
++	struct fuse_session *se = fuse_get_session(f);
++	se->op.need_worker = need_worker;
++	se->op.keep_worker = keep_worker;
++	se->worker_control_data = worker_control_data;
++
+ 	int res = fuse_start_cleanup_thread(f);
+ 	if (res)
+ 		return -1;
+ 
+-	res = fuse_session_loop_mt(fuse_get_session(f));
++	res = fuse_session_loop_mt(se);
+ 	fuse_stop_cleanup_thread(f);
+ 	return res;
++
++}
++
++int fuse_loop_mt(struct fuse *f)
++{
++	return fuse_loop_mt_with_worker_control(f, NULL, NULL, NULL);
+ }
+ 
+ FUSE_SYMVER(".symver fuse_loop_mt_proc,__fuse_loop_mt@");
+-- 
+1.9.1
+

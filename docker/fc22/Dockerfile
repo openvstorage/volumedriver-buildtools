@@ -1,0 +1,59 @@
+FROM fedora:22
+
+# add extra packages
+
+RUN echo '%_install_langs C' >> /etc/rpm/macros && \
+    dnf -y update && \
+    dnf -y install sudo wget iproute \
+                   gcc gcc-c++ clang boost-devel \
+                   flex bison gawk check pkgconfig autoconf libtool bc gettext \
+                   unzip doxygen dkms debhelper pylint git mercurial cmake lcov \
+                   openssl-devel python-devel libxml2-devel librabbitmq-devel  \
+                   libaio-devel krb5-devel c-ares-devel check-devel valgrind-devel \
+                   librdmacm-devel loki-lib-devel protobuf-devel lttng-ust-devel \
+                   cppzmq-devel tokyocabinet-devel bzip2-devel protobuf-compiler \
+                   gflags-devel snappy-devel omniORB-devel python-omniORB python-nose \
+                   libcurl-devel \
+                   rpm rpm-build fuse protobuf-python fakeroot debhelper \
+                   supervisor rpcbind && \
+    dnf clean all && \
+    rm -rf /usr/share/doc/*
+
+# add jenkins user -- this is required for git to work
+# note: jenkins has uid 1001 & gid 1002 on our build hosts, this needs to be reflected in here!
+
+RUN groupadd -g 1002 jenkins && \
+    useradd jenkins -s /bin/bash -g jenkins -m -u 1001 -g 1002 -d /home/jenkins && \
+    echo "jenkins ALL=NOPASSWD: ALL" >/etc/sudoers.d/jenkins
+
+RUN wget -q -O /tmp/arakoon.rpm \
+       https://github.com/openvstorage/arakoon/releases/download/1.8.8/arakoon-1.8.8-3.el7.centos.x86_64.rpm && \
+    sudo dnf install -y --nogpgcheck /tmp/arakoon.rpm && \
+    rm /tmp/arakoon.rpm && \
+    dnf clean all
+
+## alba package does not install on FC22; so skip that for now... (only needed for volumedriver-dynlibs-dev-rtchecked-alba)
+#    wget -q -O /tmp/alba.rpm \
+#       http://packages.cloudfounders.com/rpm/unstable/alba-0.6.18-1.el7.centos.x86_64.rpm && \
+#    sudo dnf install -y --nogpgcheck /tmp/alba.rpm && \
+#    rm /tmp/alba.rpm && \
+#    dnf clean all
+
+RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
+    echo 'StrictHostKeyChecking no' >>/etc/ssh/ssh_config
+
+RUN chmod 666 /dev/fuse
+
+# some tests need jenkins to be part of at least 3 groups; make it so...
+RUN usermod -a -G adm   jenkins && \
+    usermod -a -G users jenkins 
+
+# /etc/lsb-release is not present any more; 
+# systemd provides /etc/os-release but internal names have changed,
+# add a hardcoded one for now
+
+RUN echo -e "DISTRIB_ID=Fedora\nDISTRIB_RELEASE=22" > /etc/lsb-release
+
+ADD supervisord.conf /etc/supervisord.conf
+
+CMD [ "/usr/bin/supervisord" ]

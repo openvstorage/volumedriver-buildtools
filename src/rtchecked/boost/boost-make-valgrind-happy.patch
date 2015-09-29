@@ -1,0 +1,48 @@
+diff -prauN a/boost/uuid/seed_rng.hpp b/boost/uuid/seed_rng.hpp
+--- a/boost/uuid/seed_rng.hpp	2012-10-04 19:05:29.000000000 +0200
++++ b/boost/uuid/seed_rng.hpp	2013-07-16 11:41:22.855897263 +0200
+@@ -21,6 +21,8 @@
+ #ifndef BOOST_UUID_SEED_RNG_HPP
+ #define BOOST_UUID_SEED_RNG_HPP
+
++#include <valgrind/memcheck.h>
++
+ #include <boost/config.hpp>
+ #include <cstring> // for memcpy
+ #include <limits>
+@@ -78,7 +80,9 @@ public:
+     seed_rng()
+         : rd_index_(5)
+         , random_(std::fopen( "/dev/urandom", "rb" ))
+-    {}
++    {
++        VALGRIND_MAKE_MEM_DEFINED(rd_, sizeof(rd_));
++    }
+
+     ~seed_rng()
+     {
+@@ -114,6 +118,7 @@ private:
+     static unsigned int * sha1_random_digest_state_()
+     {
+         static unsigned int state[ 5 ];
++        VALGRIND_MAKE_MEM_DEFINED(state, sizeof(state));
+         return state;
+     }
+
+@@ -151,6 +156,7 @@ private:
+         {
+             // intentionally left uninitialized
+             unsigned char buffer[ 20 ];
++            VALGRIND_MAKE_MEM_DEFINED(buffer, sizeof(buffer));
+
+             if(random_)
+             {
+@@ -165,6 +171,8 @@ private:
+         {
+             // *p is intentionally left uninitialized
+             unsigned int * p = new unsigned int;
++            VALGRIND_MAKE_MEM_DEFINED(p, sizeof(*p));
++            VALGRIND_MAKE_MEM_DEFINED(&p, sizeof(p));
+
+             sha.process_bytes( (unsigned char const*)p, sizeof( *p ) );
+             sha.process_bytes( (unsigned char const*)&p, sizeof( p ) );

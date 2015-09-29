@@ -1,0 +1,84 @@
+diff -rupN fuse-2.9.3/lib/fuse.c fuse-2.9.3.new/lib/fuse.c
+--- fuse-2.9.3/lib/fuse.c	2013-07-01 09:40:39.000000000 +0200
++++ fuse-2.9.3.new/lib/fuse.c	2013-09-25 09:27:04.078825405 +0200
+@@ -2366,8 +2366,12 @@ static int is_open(struct fuse *f, fuse_
+ 	return isopen;
+ }
+ 
+-static char *hidden_name(struct fuse *f, fuse_ino_t dir, const char *oldname,
+-			 char *newname, size_t bufsize)
++static char *hidden_name(struct fuse *f,
++			 fuse_ino_t olddir,
++			 const char *oldname,
++			 fuse_ino_t newdir,
++			 char *newname,
++			 size_t bufsize)
+ {
+ 	struct stat buf;
+ 	struct node *node;
+@@ -2378,7 +2382,7 @@ static char *hidden_name(struct fuse *f,
+ 
+ 	do {
+ 		pthread_mutex_lock(&f->lock);
+-		node = lookup_node(f, dir, oldname);
++		node = lookup_node(f, olddir, oldname);
+ 		if (node == NULL) {
+ 			pthread_mutex_unlock(&f->lock);
+ 			return NULL;
+@@ -2387,10 +2391,10 @@ static char *hidden_name(struct fuse *f,
+ 			f->hidectr ++;
+ 			snprintf(newname, bufsize, ".fuse_hidden%08x%08x",
+ 				 (unsigned int) node->nodeid, f->hidectr);
+-			newnode = lookup_node(f, dir, newname);
++			newnode = lookup_node(f, newdir, newname);
+ 		} while(newnode);
+ 
+-		res = try_get_path(f, dir, newname, &newpath, NULL, false);
++		res = try_get_path(f, newdir, newname, &newpath, NULL, false);
+ 		pthread_mutex_unlock(&f->lock);
+ 		if (res)
+ 			break;
+@@ -2405,18 +2409,21 @@ static char *hidden_name(struct fuse *f,
+ 	return newpath;
+ }
+ 
+-static int hide_node(struct fuse *f, const char *oldpath,
+-		     fuse_ino_t dir, const char *oldname)
++static int hide_node(struct fuse *f,
++		     const char *oldpath,
++		     fuse_ino_t olddir,
++		     const char *oldname,
++		     fuse_ino_t newdir)
+ {
+ 	char newname[64];
+ 	char *newpath;
+ 	int err = -EBUSY;
+ 
+-	newpath = hidden_name(f, dir, oldname, newname, sizeof(newname));
++	newpath = hidden_name(f, olddir, oldname, newdir, newname, sizeof(newname));
+ 	if (newpath) {
+ 		err = fuse_fs_rename(f->fs, oldpath, newpath);
+ 		if (!err)
+-			err = rename_node(f, dir, oldname, dir, newname, 1);
++			err = rename_node(f, olddir, oldname, newdir, newname, 1);
+ 		free(newpath);
+ 	}
+ 	return err;
+@@ -2962,7 +2969,7 @@ static void fuse_lib_unlink(fuse_req_t r
+ 
+ 		fuse_prepare_interrupt(f, req, &d);
+ 		if (!f->conf.hard_remove && is_open(f, parent, name)) {
+-			err = hide_node(f, path, parent, name);
++			err = hide_node(f, path, parent, name, FUSE_ROOT_ID);
+ 		} else {
+ 			err = fuse_fs_unlink(f->fs, path);
+ 			if (!err)
+@@ -3035,7 +3042,7 @@ static void fuse_lib_rename(fuse_req_t r
+ 		err = 0;
+ 		fuse_prepare_interrupt(f, req, &d);
+ 		if (!f->conf.hard_remove && is_open(f, newdir, newname))
+-			err = hide_node(f, newpath, newdir, newname);
++			err = hide_node(f, newpath, newdir, newname, newdir);
+ 		if (!err) {
+ 			err = fuse_fs_rename(f->fs, oldpath, newpath);
+ 			if (!err)

@@ -1,0 +1,10 @@
+--- A/configure.ac	2014-02-26 17:06:34.520515502 +0100
++++ B/configure.ac	2014-03-03 09:55:32.118010377 +0100
+@@ -102,7 +102,6 @@ AC_SUBST(LT_CURRENT_MINUS_AGE)
+ dnl Initialize maintainer mode
+ AM_MAINTAINER_MODE
+ 
+-AM_PROG_AR
+ AC_PROG_CC
+ AC_PROG_CXX
+ 
