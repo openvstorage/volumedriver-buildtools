@@ -2,7 +2,7 @@
 set -eux
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
 
-ALBA_VERSION=0.6.20
+ALBA_VERSION=0.7.0
 ALBA_DIR=../../../../alba.git
 
 . ../definitions.sh
@@ -13,7 +13,7 @@ rm -rf ${ALBA_DIR}
 echo "<+<+< Done cleaning up from previous build"
 
 echo ">+>+> getting $ALBA_VERSION"
-git clone ssh://git@bitbucket.org/openvstorage/alba ${ALBA_DIR}
+git clone https://github.com/openvstorage/alba ${ALBA_DIR}
 pushd ${ALBA_DIR}
 git checkout ${ALBA_VERSION}
 popd
