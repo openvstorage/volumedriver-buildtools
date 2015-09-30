@@ -1,5 +1,0 @@
-repo: 76bab411d07a042ebef7becc7fe737f914f47ed5
-node: 31cbef8818871d5f5b6c2919e7fc1bdd635921e6
-branch: dynsyslibs
-latesttag: 2.0 Release
-latesttagdistance: 489
