@@ -36,17 +36,17 @@ The following tools and libraries (their development packages!) need to be avail
 (1) Create a config file that points to the desired install location and a path
     where downloaded artefacts will be stored, e.g.:
 
-    $ cat ~/Projects/openvstorage/volumedriver-buildtools/rtchecked
+    $ cat ~/Projects/openvstorage/volumedriver-buildtools/rtchecked.config
     # PLACE WHERE THE BUILD WILL BE INSTALLED
-    PREFIX=/home/arne/Projects/openvstorage/volumedriver-buildtools/rtchecked
+    PREFIX=~/Projects/openvstorage/volumedriver-buildtools/rtchecked
     # PLACE WHERE THE SOURCES CAN BE FOUND
-    SOURCES_DIR=/home/arne/Projects/openvstorage/volumedriver-buildtools/sources
+    SOURCES_DIR=~/Projects/openvstorage/volumedriver-buildtools/sources
     # number of parallel processes to use during the build phase -- default 2
     BUILD_NUM_PROCESSES=3
 
 (2) Set the VOLUMEDRIVER_BUILD_CONFIGURATION env var to point to this config file
     and run build.sh of the desired flavour, e.g.:
 
-    $ export VOLUMEDRIVER_BUILD_CONFIGURATION=/home/arne/Projects/openvstorage/volumedriver-buildtools/rtchecked.config
+    $ export VOLUMEDRIVER_BUILD_CONFIGURATION=~/Projects/openvstorage/volumedriver-buildtools/rtchecked.config
     $ cd src/rtchecked
     $ ./build.sh
