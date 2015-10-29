@@ -42,30 +42,26 @@ RUN apt-get install -y mercurial rpm pkg-create-dbgsym elfutils \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean
 
-# install valgrind 3.10.1 as the older3.10.0-svn version in ubuntu has the tendency
+# install newer valgrind as the older3.10.0-svn version in ubuntu has the tendency
 # to hang
-RUN wget -q -O /tmp/valgrind-3.10.1.tar.bz2 \
-    http://valgrind.org/downloads/valgrind-3.10.1.tar.bz2 && \
+RUN VALVERSION="3.11.0" && \
+    wget -q -O /tmp/valgrind-${VALVERSION}.tar.bz2 \
+    http://valgrind.org/downloads/valgrind-${VALVERSION}.tar.bz2 && \
     cd /tmp && \
-    tar xjf valgrind-3.10.1.tar.bz2 && \
-    cd valgrind-3.10.1 && \
+    tar xjf valgrind-${VALVERSION}.tar.bz2 && \
+    cd valgrind-${VALVERSION} && \
     ./configure --prefix=/usr && \
     make -j 2 && \
     sudo make install && \
     cd /tmp && \
-    rm -rf /tmp/valgrind-3.10.1 && \
-    rm /tmp/valgrind-3.10.1.tar.bz2
+    rm -rf /tmp/valgrind-${VALVERSION} && \
+    rm /tmp/valgrind-${VALVERSION}.tar.bz2
 
-# volumedriver-core checks for arakoon
-RUN apt-get install -y libev4 && apt-get clean && \
-    wget -q -O /tmp/arakoon \
-       https://github.com/openvstorage/arakoon/releases/download/1.8.8/arakoon_1.8.8_amd64.deb && \
-    sudo dpkg -i /tmp/arakoon && \
-    rm /tmp/arakoon && \
-    wget -q -O /tmp/alba.deb \
-       http://packages.cloudfounders.com/apt/unstable/alba_0.6.18_amd64.deb && \
-    sudo dpkg -i /tmp/alba.deb && \
-    rm /tmp/alba.deb
+# volumedriver-core tests use arakoon & alba 
+RUN echo "deb http://packages.cloudfounders.com/apt/ unstable/" > /etc/apt/sources.list.d/ovsaptrepo.list && \
+    apt-get update && \
+    apt-get install -y --allow-unauthenticated arakoon alba && \
+    apt-get clean
 
 RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
     echo 'StrictHostKeyChecking no' >>/etc/ssh/ssh_config
