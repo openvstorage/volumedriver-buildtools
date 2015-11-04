@@ -8,7 +8,7 @@ set -xeu
 check_buildtools_version
 
 #order is important here ladies and gentlemen"
-PACKAGES="crakoon fuse gtest webstor simpleamqpclient ganesha libnfs rocksdb capnproto alba buildtools"
+PACKAGES="crakoon fuse gtest webstor simpleamqpclient ganesha libnfs rocksdb capnproto alba ovsbackends buildtools"
 
 PACKAGES_TO_BUILD=${RECIPE:-"$PACKAGES"}
 
