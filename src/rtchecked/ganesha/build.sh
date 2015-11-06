@@ -34,6 +34,7 @@ patch -p1 < ../fsal_pseudo_nameleak.patch
 patch -p1 < ../config_parsing_initleak.patch
 patch -p1 < ../thrdpool_shutdown.patch
 #patch -p1 < ../drop-renamed-inodes-from-cache.patch
+patch -p2 < ../0001-Only-kill-entry-in-cache_inode_refresh_attrs-if-erro.patch
 
 if [ ${DISTRIB_RELEASE} != "12.04" ]
 then

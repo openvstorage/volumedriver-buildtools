@@ -1,0 +1,33 @@
+Backport of the following upstream patch to Ganesha 2.1.0 by
+replacing CACHE_INODE_ESTALE with CACHE_INODE_FSAL_ESTALE.
+
+From cf797c82e41b720ff722dde2fb81475f181932c8 Mon Sep 17 00:00:00 2001
+From: "Frank S. Filz" <ffilzlnx@mindspring.com>
+Date: Thu, 23 Jul 2015 17:44:41 -0400
+Subject: [PATCH] Only kill entry in cache_inode_refresh_attrs if error is
+ ESTALE
+
+Change-Id: I4b1aa0bab68119f89141a2144a9c4912625808b4
+Signed-off-by: Frank S. Filz <ffilzlnx@mindspring.com>
+---
+ src/include/cache_inode.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/include/cache_inode.h b/src/include/cache_inode.h
+index ae6e4fc..a05a73d 100644
+--- a/src/include/cache_inode.h
++++ b/src/include/cache_inode.h
+@@ -968,8 +968,9 @@ cache_inode_refresh_attrs(cache_entry_t *entry)
+ 	fsal_status =
+ 	    entry->obj_handle->obj_ops.getattrs(entry->obj_handle);
+ 	if (FSAL_IS_ERROR(fsal_status)) {
+-		cache_inode_kill_entry(entry);
+ 		cache_status = cache_inode_error_convert(fsal_status);
++		if (cache_status == CACHE_INODE_FSAL_ESTALE)
++			cache_inode_kill_entry(entry);
+ 		LogDebug(COMPONENT_CACHE_INODE, "Failed on entry %p %s", entry,
+ 			 cache_inode_err_str(cache_status));
+ 		goto out;
+-- 
+2.6.3
+
