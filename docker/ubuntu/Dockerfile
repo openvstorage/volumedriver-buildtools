@@ -33,6 +33,8 @@ RUN apt-get update && \
                        libcurl4-openssl-dev libc6-dbg \
                        librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev && \
     apt-get -y autoremove --purge && apt-get clean && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 99 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 99 && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.5 99 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.5 99 && \
     update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.5 99
