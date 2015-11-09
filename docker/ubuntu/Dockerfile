@@ -1,10 +1,15 @@
 FROM ubuntu:14.04
 
+# last update: 20151030 
+#  -- change previous line to trigger rebuild of docker image on jenkins; eg. when docker-entrypoint.sh changes
+
 # add jenkins user -- this is required for git to work
 # note: jenkins has uid 1001 & gid 1002 on our build hosts, this needs to be reflected in here!
 
+ENV UID 1001
+
 RUN groupadd -g 1002 jenkins && \
-    useradd jenkins -s /bin/bash -g jenkins -m -u 1001 -g 1002 -d /home/jenkins && \
+    useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins && \
     echo "jenkins ALL=NOPASSWD: ALL" >/etc/sudoers.d/jenkins
 
 # add required packages
@@ -72,5 +77,8 @@ RUN usermod -a -G fuse jenkins && \
     usermod -a -G adm  jenkins
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
+
+ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 
 CMD [ "/usr/bin/supervisord" ]

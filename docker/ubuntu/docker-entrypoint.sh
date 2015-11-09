@@ -2,7 +2,7 @@
 
 # this script is executed at each startup of the container
 # NOTE: for jenkins, make sure to trigger a rebuild of the docker image 
-#       when making changes to this file! 
+#       when making changes to this file! (md5sum of Dockerfile should change)
 
 set -e
 set -x
@@ -12,8 +12,9 @@ set -x
 
 if [ ${UID} -ne 1001 ]
 then
-  sed -i "s/:1001:/:${UID}:/" /etc/passwd
-  chown ${UID} /home/jenkins /home/jenkins/.ssh
+  sed -i "s/x:1001:/x:${UID}:/" /etc/passwd
+  chown ${UID} /home/jenkins 
+  [ -d /home/jenkins/.ssh ] && chown ${UID} /home/jenkins/.ssh
 fi
 
 # update alba & arakoon packages to latest/greatest
