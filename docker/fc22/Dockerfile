@@ -15,8 +15,8 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    libaio-devel krb5-devel c-ares-devel check-devel valgrind-devel \
                    librdmacm-devel loki-lib-devel protobuf-devel lttng-ust-devel \
                    cppzmq-devel tokyocabinet-devel bzip2-devel protobuf-compiler \
-                   gflags-devel snappy-devel omniORB-devel python-omniORB python-nose \
-                   libcurl-devel \
+                   gflags-devel snappy-devel omniORB-devel omniORB-servers python-omniORB \
+		   python-nose libcurl-devel \
                    rpm rpm-build fuse protobuf-python fakeroot debhelper \
                    supervisor rpcbind && \
     dnf clean all && \
