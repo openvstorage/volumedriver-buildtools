@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-# last update: 20151030 
+# last update: 20151202
 #  -- change previous line to trigger rebuild of docker image on jenkins; eg. when docker-entrypoint.sh changes
 
 # add jenkins user -- this is required for git to work
@@ -65,7 +65,7 @@ RUN VALVERSION="3.11.0" && \
     rm -rf /tmp/valgrind-${VALVERSION} && \
     rm /tmp/valgrind-${VALVERSION}.tar.bz2
 
-# volumedriver-core tests use arakoon & alba 
+# volumedriver-core tests use arakoon & alba
 RUN echo "deb http://packages.cloudfounders.com/apt/ unstable/" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update && \
     apt-get install -y --allow-unauthenticated arakoon alba && \
