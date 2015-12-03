@@ -1,6 +1,6 @@
 FROM fedora:22
 
-# last update: 20151203
+# last update: 20151203 10:06
 #  -- change previous line to trigger rebuild of docker image on jenkins; eg. when docker-entrypoint.sh changes
 
 # add extra packages
