@@ -1,6 +1,6 @@
 FROM fedora:22
 
-# last update: 20151030 
+# last update: 20151203
 #  -- change previous line to trigger rebuild of docker image on jenkins; eg. when docker-entrypoint.sh changes
 
 # add extra packages
@@ -46,9 +46,9 @@ RUN chmod 666 /dev/fuse
 
 # some tests need jenkins to be part of at least 3 groups; make it so...
 RUN usermod -a -G adm   jenkins && \
-    usermod -a -G users jenkins 
+    usermod -a -G users jenkins
 
-# /etc/lsb-release is not present any more; 
+# /etc/lsb-release is not present any more;
 # systemd provides /etc/os-release but internal names have changed,
 # add a hardcoded one for now
 
