@@ -22,8 +22,5 @@ fi
 apt-get update -qq
 apt-get install -qq -y alba arakoon
 
-# start omniNames - the tests need it
-service omniorb4-nameserver start
-
 # finally execute the command the user requested
 exec "$@"

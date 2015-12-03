@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-# last update: 20151202
+# last update: 20151203
 #  -- change previous line to trigger rebuild of docker image on jenkins; eg. when docker-entrypoint.sh changes
 
 # add jenkins user -- this is required for git to work
