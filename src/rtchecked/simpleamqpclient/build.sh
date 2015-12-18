@@ -27,6 +27,7 @@ echo "<+<+< Done unpacking $SIMPLEAMPQCLIENT_VERSION"
 
 echo ">+>+> Patching $SIMPLEAMPQCLIENT_VERSION"
 pushd $SIMPLEAMPQCLIENT_DIR
+patch -p1 < ../0001-Introduce-Channel-GetSockFd.patch
 popd
 echo "<+<+< Done patching $SIMPLEAMPQCLIENT_VERSION"
 
