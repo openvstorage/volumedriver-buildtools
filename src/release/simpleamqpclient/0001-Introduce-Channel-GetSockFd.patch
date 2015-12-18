@@ -1,0 +1,51 @@
+From fc5771843976d401f756deb787ef6445942e0e9c Mon Sep 17 00:00:00 2001
+From: Arne Redlich <arne.redlich@openvstorage.com>
+Date: Thu, 17 Dec 2015 14:14:46 +0100
+Subject: [PATCH] Introduce Channel::GetSockFd
+
+---
+ src/Channel.cpp                | 12 ++++++++++++
+ src/SimpleAmqpClient/Channel.h |  6 ++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/src/Channel.cpp b/src/Channel.cpp
+index 01a5df0..c8e4431 100644
+--- a/src/Channel.cpp
++++ b/src/Channel.cpp
+@@ -758,4 +758,16 @@ bool Channel::BasicConsumeMessage(Envelope::ptr_t &message, int timeout)
+     return m_impl->ConsumeMessageOnChannel(channels, message, timeout);
+ }
+ 
++int Channel::SockFd() const
++{
++    if (m_impl->m_connection)
++    {
++        return amqp_get_sockfd(m_impl->m_connection);
++    }
++    else
++    {
++        return -1;
++    }
++}
++
+ } // namespace AmqpClient
+diff --git a/src/SimpleAmqpClient/Channel.h b/src/SimpleAmqpClient/Channel.h
+index d930108..3af4eaf 100644
+--- a/src/SimpleAmqpClient/Channel.h
++++ b/src/SimpleAmqpClient/Channel.h
+@@ -668,6 +668,12 @@ public:
+      */
+     bool BasicConsumeMessage(Envelope::ptr_t &envelope, int timeout = -1);
+ 
++    /**
++     * Get access to the underlying socket
++     * @returns socket file descriptor, < 0 on error
++     */
++    int SockFd() const;
++
+ protected:
+     boost::scoped_ptr<Detail::ChannelImpl> m_impl;
+ };
+-- 
+2.6.1
+
