@@ -44,6 +44,7 @@ RUN apt-get install -y mercurial rpm pkg-create-dbgsym elfutils \
                        libloki-dev libprotobuf-dev liblttng-ust-dev libzmq3-dev \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
                        libgflags-dev libsnappy-dev \
+                       redis-server libhiredis-dev libhiredis-dbg \
 		       libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
                        librdmacm-dev libibverbs-dev python-nose fuse \
                        python-protobuf \
