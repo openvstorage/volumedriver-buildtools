@@ -32,7 +32,7 @@ RUN groupadd -g 1002 jenkins && \
     useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins && \
     echo "jenkins ALL=NOPASSWD: ALL" >/etc/sudoers.d/jenkins
 
-RUN echo -e '[ovs]\nname=ovs\nbaseurl=http://yum.openvstorage.org/CentOS/7/x86_64/dists/denver-unstable \nenabled=1' > /etc/yum.repos.d/ovs.repo && \
+RUN echo -e '[ovs]\nname=ovs\nbaseurl=http://yum.openvstorage.org/CentOS/7/x86_64/dists/eugene-updates \nenabled=1' > /etc/yum.repos.d/ovs.repo && \
     dnf -y update && \
     dnf install -y --nogpgcheck arakoon &&\
     dnf clean all
