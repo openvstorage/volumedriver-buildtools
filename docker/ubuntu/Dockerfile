@@ -40,7 +40,8 @@ RUN apt-get update && \
     update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.5 99
 
 # for volumedriver-core
-RUN apt-get install -y mercurial rpm pkg-create-dbgsym elfutils \
+RUN apt-get update && \
+    apt-get install -y mercurial rpm pkg-create-dbgsym elfutils \
                        libloki-dev libprotobuf-dev liblttng-ust-dev libzmq3-dev \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
                        libgflags-dev libsnappy-dev \
