@@ -1,0 +1,5 @@
+[openvstorage]
+name=OVS repo
+baseurl=http://yum.openvstorage.org/CentOS/7/x86_64/dists/unstable
+enabled=1
+gpgcheck=0
