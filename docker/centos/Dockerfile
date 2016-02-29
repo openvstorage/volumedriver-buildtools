@@ -6,7 +6,7 @@ FROM centos:7
 # add extra packages
 
 RUN echo '%_install_langs C' >> /etc/rpm/macros && \
-    yum -y install centos-release-openstack-liberty epel-release && \
+    yum -y install epel-release && \
     echo -e '[ovs]\nname=ovs\nbaseurl=http://yum.openvstorage.org/CentOS/7/x86_64/dists/unstable\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/ovs.repo && \
     yum -y update && \
     yum -y install sudo wget iproute \
