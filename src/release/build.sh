@@ -2,6 +2,8 @@
 # This is where we document and define global build variables
 set -xeu
 
+cd ${0%/build.sh}
+
 . ../helper-functions.sh
 . ../BUILDTOOLS_VERSION.sh
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
