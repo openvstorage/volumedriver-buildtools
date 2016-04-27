@@ -50,6 +50,9 @@ mkdir -p $GANESHA_BUILD_DIR
 pushd $GANESHA_BUILD_DIR
 
 case `lsb_release -sr` in
+    rolling)
+	LIBCAP=/lib/libcap.so
+	;;
     11.10)
 	LIBCAP=/lib/libcap.a
 	;;
