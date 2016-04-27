@@ -13,7 +13,7 @@ set -x
 if [ ${UID} -ne 1001 ]
 then
   sed -i "s/x:1001:/x:${UID}:/" /etc/passwd
-  chown ${UID} /home/jenkins
+  chown -R ${UID} /home/jenkins
   [ -d /home/jenkins/.ssh ] && chown ${UID} /home/jenkins/.ssh
 fi
 
