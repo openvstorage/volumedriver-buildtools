@@ -30,7 +30,7 @@ RUN apt-get update && \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
                        wget libssl-dev libpython2.7-dev libxml2-dev \
-                       libcurl4-openssl-dev libc6-dbg \
+                       libcurl4-openssl-dev libc6-dbg liblz4-devel \
                        librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev && \
     apt-get -y autoremove --purge && apt-get clean && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 99 && \
