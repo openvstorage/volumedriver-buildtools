@@ -20,7 +20,7 @@ fi
 # update alba & arakoon packages to latest/greatest
 
 apt-get update -qq
-apt-get install -qq -y alba arakoon
+apt-get install -qq -y --allow-unauthenticated alba arakoon
 
 # finally execute the command the user requested
 exec "$@"
