@@ -18,7 +18,7 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            wget openssl python2 libxml2 \
                            curl lsb-release \
                            rabbitmq libaio krb5 c-ares \
-                           python2-pylint libcap lz4 \
+                           python2-pylint libcap \
                            \
                            # next are for volumedriver-core
                            \
