@@ -32,7 +32,11 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            \
                            # for running tests inside docker \
                            \
-                           supervisor rpcbind
+                           supervisor rpcbind \
+                           \
+                           # for jenkins plugin \
+                           \
+                           iproute2 
 
 ## extra packages not available in the default repo 
 ## makepkg refuses running as root, so switch to jenkins first
