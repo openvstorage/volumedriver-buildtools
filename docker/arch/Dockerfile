@@ -97,6 +97,7 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     rm -rf librdmacm
 
 USER root
+WORKDIR /root
 
 # volumedriver-core tests use arakoon & alba
 # volumedriver-core needs accelio library to build
