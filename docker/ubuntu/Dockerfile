@@ -68,14 +68,10 @@ RUN VALVERSION="3.11.0" && \
     rm /tmp/valgrind-${VALVERSION}.tar.bz2
 
 # volumedriver-core tests use arakoon & alba
-RUN echo "deb http://packages.cloudfounders.com/apt/ unstable/" > /etc/apt/sources.list.d/ovsaptrepo.list && \
+# volumedriver-core need accelio library to build
+RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update && \
     apt-get install -y --allow-unauthenticated arakoon alba && \
-    apt-get clean
-
-# volumedriver-core need accelio library to build
-RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/aptovs.list && \
-    apt-get update && \
     apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
     apt-get clean
 
