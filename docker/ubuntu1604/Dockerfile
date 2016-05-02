@@ -22,7 +22,7 @@ RUN apt-get update -qq && \
     apt-get -y autoremove --purge && apt-get clean
 
 # for volumedriver-core
-RUN apt-get update && \
+RUN apt-get update -qq && \
     apt-get install -y pkg-create-dbgsym elfutils \
                        libloki-dev libprotobuf-dev liblttng-ust-dev libzmq3-dev \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
@@ -39,11 +39,15 @@ RUN groupadd -g 1002 jenkins && \
     echo "jenkins ALL=NOPASSWD: ALL" >/etc/sudoers.d/jenkins
 
 # volumedriver-core tests use arakoon & alba
-# volumedriver-core need accelio library to build
+# (note: apt-get install -y --allow-unauthenticated arakoon alba does not yet work on 16.04)
+# volumedriver-core needs accelio library to build
 RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update -qq && \
-    #apt-get install -y --allow-unauthenticated arakoon alba && \
     apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
+    apt-get install -y libev4 && \
+    cd /root && apt-get download --allow-unauthenticated arakoon alba && \
+    dpkg -i --ignore-depends=libgflags2,libsnappy1 alba_*_amd64.deb arakoon_*_amd64.deb && \
+    rm alba_*_amd64.deb arakoon_*_amd64.deb && \
     apt-get clean
 
 RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
