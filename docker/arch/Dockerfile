@@ -115,9 +115,9 @@ WORKDIR /root
 #     usermod -a -G sudo jenkins && \
 #     usermod -a -G adm  jenkins
 
-ADD supervisord.conf /etc/supervisor/supervisord.conf
+ADD supervisord.conf /etc/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
 
 ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 
-CMD [ "/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf" ]
+CMD [ "/usr/bin/supervisord" ]

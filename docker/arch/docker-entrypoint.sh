@@ -23,4 +23,4 @@ fi
 ##apt-get install -qq -y alba arakoon
 
 # finally execute the command the user requested
-exec "$*"
+exec "$@"
