@@ -99,6 +99,11 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
 USER root
 WORKDIR /root
 
+# some extra symlinks as included tests expect python2 variants as default 
+RUN cd /usr/bin && \
+    ln -s nosetests2 nosetests && \
+    ln -s pylint2 pylint
+
 # volumedriver-core tests use arakoon & alba
 # volumedriver-core needs accelio library to build
 #RUN echo "deb http://packages.cloudfounders.com/apt/ unstable/" > /etc/apt/sources.list.d/ovsaptrepo.list && \
