@@ -112,6 +112,12 @@ RUN cd /usr/bin && \
 #    apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
 #    apt-get clean
 
+# get arakoon from fileserver.openvstorage.com for now
+RUN cd /usr/bin && \
+    wget -q -O arakoon http://172.19.2.4/Engineering/docker/arch_arakoon && \
+    chmod +x arakoon && \
+    pacman -Sy --noconfirm libev
+
 #RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
 #    echo 'StrictHostKeyChecking no' >>/etc/ssh/ssh_config
 
