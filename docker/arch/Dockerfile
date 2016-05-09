@@ -122,9 +122,9 @@ RUN cd /usr/bin && \
 #    echo 'StrictHostKeyChecking no' >>/etc/ssh/ssh_config
 
 # some tests need jenkins to be part of at least 3 groups; make it so...
-# RUN usermod -a -G fuse jenkins && \
-#     usermod -a -G sudo jenkins && \
-#     usermod -a -G adm  jenkins
+RUN usermod -a -G lp jenkins && \
+    usermod -a -G games jenkins && \
+    usermod -a -G floppy jenkins
 
 ADD supervisord.conf /etc/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
