@@ -20,7 +20,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    gflags-devel snappy-devel omniORB-devel omniORB-servers python-omniORB \
                    redis hiredis-devel \
                    python-nose libcurl-devel \
-                   rpm rpm-build fuse protobuf-python fakeroot \
+                   rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
                    supervisor rpcbind && \
     yum clean all && \
     rm -rf /usr/share/doc/*
