@@ -94,7 +94,13 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     sed -i -e '/^url=/s/(//' -e '/^url=/s/)//' PKGBUILD && \
     makepkg -sri --noconfirm && \
     cd .. && \
-    rm -rf librdmacm
+    rm -rf librdmacm && \
+    \
+    git clone https://aur.archlinux.org/lcov.git && \
+    cd lcov && \
+    makepkg -sri --noconfirm && \
+    cd .. && \
+    rm -rf lcov
 
 USER root
 WORKDIR /root
@@ -128,6 +134,7 @@ RUN usermod -a -G lp jenkins && \
 
 ADD supervisord.conf /etc/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
+ADD omniORB.cfg /etc/omniorb/omniORB.cfg
 
 ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 
