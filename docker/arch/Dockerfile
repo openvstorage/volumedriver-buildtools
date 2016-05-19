@@ -18,7 +18,7 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            wget openssl python2 libxml2 \
                            curl lsb-release \
                            rabbitmq libaio krb5 c-ares \
-                           python2-pylint libcap lz4 \
+                           python2-pylint libcap lz4 numactl \
                            \
                            # next are for volumedriver-core
                            \
@@ -42,6 +42,7 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
 ## makepkg refuses running as root, so switch to jenkins first
 
 RUN echo 'jenkins ALL=NOPASSWD: ALL' >/etc/sudoers.d/jenkins
+RUN sed -i 's+^#XferCommand = /usr/bin/wget+XferCommand = /usr/bin/wget+' /etc/pacman.conf
 
 WORKDIR /tmp
 USER jenkins
@@ -100,8 +101,16 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     cd lcov && \
     makepkg -sri --noconfirm && \
     cd .. && \
-    rm -rf lcov
-
+    rm -rf lcov && \
+    \
+    git clone https://github.com/accelio/accelio && \
+    cd accelio && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr && make && \
+    sudo make install && \
+    cd .. && \
+    rm -rf accelio
+    
 USER root
 WORKDIR /root
 
