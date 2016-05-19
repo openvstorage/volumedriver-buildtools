@@ -17,7 +17,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    cppzmq-devel tokyocabinet-devel bzip2-devel protobuf-compiler \
                    gflags-devel snappy-devel omniORB-devel omniORB-servers python-omniORB \
                    redis hiredis-devel \
-                   python-nose libcurl-devel \
+                   python-nose libcurl-devel lz4-devel \
                    rpm rpm-build fuse protobuf-python fakeroot debhelper \
                    supervisor rpcbind && \
     dnf clean all && \
