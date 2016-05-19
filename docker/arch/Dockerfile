@@ -103,7 +103,7 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     cd .. && \
     rm -rf lcov && \
     \
-    git clone https://github.com/accelio/accelio && \
+    git clone https://github.com/accelio/accelio --branch v1.6 --single-branch && \
     cd accelio && \
     ./autogen.sh && \
     ./configure --prefix=/usr && make && \
