@@ -13,14 +13,14 @@ set -x
 if [ ${UID} -ne 1001 ]
 then
   sed -i "s/x:1001:/x:${UID}:/" /etc/passwd
-  chown ${UID} /home/jenkins
+  chown -R ${UID} /home/jenkins
   [ -d /home/jenkins/.ssh ] && chown ${UID} /home/jenkins/.ssh
 fi
 
 # update alba & arakoon packages to latest/greatest
 
-apt-get update -qq
-apt-get install -qq -y --allow-unauthenticated alba arakoon
+##apt-get update -qq
+##apt-get install -qq -y alba arakoon
 
 # finally execute the command the user requested
 exec "$@"

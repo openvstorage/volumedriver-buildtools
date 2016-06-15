@@ -22,7 +22,7 @@ Name: volumedriver-buildtools
 Description: VolumeDriver thirdparty software
 Version: ${BUILDTOOLS_VERSION?}
 Cflags: -I\${includedir} ${CPP_EXPORTED_FLAGS?}
-Libs: -L\${libdir} -llttng-ust -llttng-ust-tracepoint -lurcu-cds -lurcu-bp -lalbaproxy -lcapnp-rpc -lkj-async -lcapnp -lkj  -lprotobuf -lomniORB4 -lomnithread -lcurl -lgtest -lboost_python -lpython2.7 -larakoon-1.0 -lSimpleAmqpClient -lrabbitmq -lwebstor -lcurl -lssl -lcrypto -lxml2 -lboost_random -lboost_log -lboost_thread -lboost_serialization -lboost_regex -lboost_program_options -lboost_chrono -lboost_filesystem -lboost_date_time -lboost_system -lcares -lzmq -ltokyocabinet -lrocksdb -lsnappy -lbz2 -lz -ldl
+Libs: -L\${libdir} -llttng-ust -llttng-ust-tracepoint -lurcu-cds -lurcu-bp -lalbaproxy -lcapnp-rpc -lkj-async -lcapnp -lkj  -lprotobuf -lomniORB4 -lomnithread -lcurl -lgtest -lboost_python -lpython2.7 -larakoon-1.0 -lSimpleAmqpClient -lrabbitmq -lwebstor -lcurl -lssl -lcrypto -lxml2 -lboost_random -lboost_log -lboost_thread -lboost_serialization -lboost_regex -lboost_program_options -lboost_chrono -lboost_filesystem -lboost_date_time -lboost_system -lcares -lzmq -ltokyocabinet -lrocksdb -llz4 -lsnappy -lbz2 -lz -ldl
 EOF
 
 echo "<+<+< Done generating thirdparty pkg-config file"

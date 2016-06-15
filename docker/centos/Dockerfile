@@ -11,16 +11,16 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
     yum -y update && \
     yum -y install sudo wget iproute \
                    gcc gcc-c++ clang boost-devel make \
-                   flex bison gawk check pkgconfig autoconf libtool bc gettext \
+                   flex bison gawk check pkgconfig autoconf libtool bc gettext gettext-devel \
                    unzip doxygen dkms pylint git mercurial cmake lcov \
                    openssl-devel python-devel libxml2-devel librabbitmq-devel  \
                    libaio-devel krb5-devel c-ares-devel check-devel valgrind-devel \
                    librdmacm-devel loki-lib-devel protobuf-devel lttng-ust-devel \
                    cppzmq-devel tokyocabinet-devel bzip2-devel protobuf-compiler \
                    gflags-devel snappy-devel omniORB-devel omniORB-servers python-omniORB \
-                   redis hiredis-devel \
+                   redis hiredis-devel lz4-devel \
                    python-nose libcurl-devel \
-                   rpm rpm-build fuse protobuf-python fakeroot \
+                   rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
                    supervisor rpcbind && \
     yum clean all && \
     rm -rf /usr/share/doc/*
