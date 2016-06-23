@@ -5,7 +5,7 @@ FROM pritunl/archlinux:2016-04-16
 ENV UID 1001
 
 RUN groupadd -g 1002 jenkins && \
-    useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins 
+    useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins
 
 # add required packages
 
@@ -18,7 +18,7 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            wget openssl python2 libxml2 \
                            curl lsb-release \
                            rabbitmq libaio krb5 c-ares \
-                           python2-pylint libcap lz4 numactl \
+                           python2-pylint libcap lz4 numactl libunwind google-glog \
                            \
                            # next are for volumedriver-core
                            \
@@ -36,9 +36,9 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            \
                            # for jenkins plugin \
                            \
-                           iproute2 
+                           iproute2
 
-## extra packages not available in the default repo 
+## extra packages not available in the default repo
 ## makepkg refuses running as root, so switch to jenkins first
 
 RUN echo 'jenkins ALL=NOPASSWD: ALL' >/etc/sudoers.d/jenkins
@@ -59,7 +59,7 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     cd .. && \
     rm -rf loki-lib && \
     \
-    git clone https://aur.archlinux.org/lttng-ust.git && \ 
+    git clone https://aur.archlinux.org/lttng-ust.git && \
     cd lttng-ust && \
     makepkg -sri --noconfirm && \
     cd .. && \
@@ -110,11 +110,11 @@ RUN git clone https://aur.archlinux.org/librabbitmq-c.git && \
     sudo make install && \
     cd .. && \
     rm -rf accelio
-    
+
 USER root
 WORKDIR /root
 
-# some extra symlinks as included tests expect python2 variants as default 
+# some extra symlinks as included tests expect python2 variants as default
 RUN cd /usr/bin && \
     ln -s nosetests2 nosetests && \
     ln -s pylint2 pylint
