@@ -21,9 +21,12 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    redis hiredis-devel lz4-devel \
                    python-nose libcurl-devel \
                    rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
-                   supervisor rpcbind && \
+                   supervisor rpcbind libunwind glog-devel && \
     yum clean all && \
     rm -rf /usr/share/doc/*
+
+# libunwind is desired by glog which in turn is (at the moment?) used by gobjfs
+RUN ln -s /usr/lib64/libunwind.so.8 /usr/lib64/libunwind.so
 
 # add jenkins user -- this is required for git to work
 # note: jenkins has uid 1001 & gid 1002 on our build hosts, this needs to be reflected in here!

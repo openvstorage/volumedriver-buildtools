@@ -18,7 +18,8 @@ RUN apt-get update -qq && \
                        unzip doxygen dkms debhelper pylint git cmake \
                        wget libssl-dev libpython2.7-dev libxml2-dev \
                        libcurl4-openssl-dev libc6-dbg liblz4-dev \
-                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev && \
+                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev \
+                       libunwind8 libgoogle-glog-dev && \
     apt-get -y autoremove --purge && apt-get clean
 
 # for volumedriver-core
