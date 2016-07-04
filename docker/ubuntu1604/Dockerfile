@@ -16,7 +16,7 @@ RUN apt-get update -qq && \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
-                       wget libssl-dev libpython2.7-dev libxml2-dev \
+                       wget libssl-dev libpython2.7-dev libpython3.5-dev libxml2-dev \
                        libcurl4-openssl-dev libc6-dbg liblz4-dev \
                        librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev \
                        libunwind8 libgoogle-glog-dev && \
