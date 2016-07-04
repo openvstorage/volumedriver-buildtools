@@ -12,7 +12,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
     yum -y install sudo wget iproute \
                    gcc gcc-c++ clang boost-devel make \
                    flex bison gawk check pkgconfig autoconf libtool bc gettext gettext-devel \
-                   unzip doxygen dkms pylint git mercurial cmake lcov \
+                   unzip doxygen dkms pylint git mercurial cmake3 lcov \
                    openssl-devel python-devel libxml2-devel librabbitmq-devel  \
                    libaio-devel krb5-devel c-ares-devel check-devel valgrind-devel \
                    librdmacm-devel loki-lib-devel protobuf-devel lttng-ust-devel \
