@@ -23,6 +23,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
                    supervisor rpcbind libunwind glog-devel && \
     yum clean all && \
+    ln -s /usr/bin/cmake3 /usr/bin/cmake && \
     rm -rf /usr/share/doc/*
 
 # libunwind is desired by glog which in turn is (at the moment?) used by gobjfs
