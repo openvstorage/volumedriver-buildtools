@@ -18,12 +18,13 @@ exec_prefix=\${prefix}
 includedir=\${prefix}/include
 libdir=\${exec_prefix}/lib
 python_version=${PYTHON_VERSION}
+boost_python_library_name=${BOOST_PYTHON_LIBRARY_NAME:-"boost_python"}
 
 Name: volumedriver-buildtools
 Description: VolumeDriver thirdparty software
 Version: ${BUILDTOOLS_VERSION?}
 Cflags: -I\${includedir} ${CPP_EXPORTED_FLAGS?}
-Libs: -L\${libdir} -llttng-ust -llttng-ust-tracepoint -lurcu-cds -lurcu-bp -lalbaproxy -lgobjfs_client -lxio -lcapnp-rpc -lkj-async -lcapnp -lkj -lprotobuf -lomniORB4 -lomnithread -lcurl -lgtest -lboost_python -lpython\${python_version} -larakoon-1.0 -lSimpleAmqpClient -lrabbitmq -lwebstor -lcurl -lssl -lcrypto -lxml2 -lboost_random -lboost_log -lboost_thread -lboost_serialization -lboost_regex -lboost_program_options -lboost_chrono -lboost_filesystem -lboost_date_time -lboost_system -lcares -lzmq -ltokyocabinet -lrocksdb -llz4 -lsnappy -lbz2 -lz -ldl
+Libs: -L\${libdir} -llttng-ust -llttng-ust-tracepoint -lurcu-cds -lurcu-bp -lalbaproxy -lgobjfs_client -lxio -lcapnp-rpc -lkj-async -lcapnp -lkj  -lprotobuf -lomniORB4 -lomnithread -lcurl -lgtest -l\${boost_python_library_name} -lpython\${python_version} -larakoon-1.0 -lSimpleAmqpClient -lrabbitmq -lwebstor -lcurl -lssl -lcrypto -lxml2 -lboost_random -lboost_log -lboost_thread -lboost_serialization -lboost_regex -lboost_program_options -lboost_chrono -lboost_filesystem -lboost_date_time -lboost_system -lcares -lzmq -ltokyocabinet -lrocksdb -llz4 -lsnappy -lbz2 -lz -ldl
 EOF
 
 echo "<+<+< Done generating thirdparty pkg-config file"
