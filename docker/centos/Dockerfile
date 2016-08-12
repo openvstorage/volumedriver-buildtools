@@ -21,7 +21,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    redis hiredis-devel lz4-devel \
                    python-nose libcurl-devel \
                    rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
-                   supervisor rpcbind libunwind glog-devel && \
+                   uriparser-devel supervisor rpcbind libunwind glog-devel && \
     yum clean all && \
     ln -s /usr/bin/cmake3 /usr/bin/cmake && \
     rm -rf /usr/share/doc/*

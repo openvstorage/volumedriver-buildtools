@@ -47,8 +47,8 @@ RUN apt-get update && \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
                        libgflags-dev libsnappy-dev \
                        redis-server libhiredis-dev libhiredis-dbg \
-                        libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
-                       librdmacm-dev libibverbs-dev python-nose fuse \
+                       libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
+                       librdmacm-dev libibverbs-dev liburiparser-dev python-nose fuse \
                        python-protobuf \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean

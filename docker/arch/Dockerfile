@@ -29,6 +29,7 @@ RUN pacman -Sy --noconfirm gcc clang valgrind \
                            redis hiredis \
                            python2-nose fuse \
                            python2-protobuf \
+			   uriparser \
                            \
                            # for running tests inside docker \
                            \
