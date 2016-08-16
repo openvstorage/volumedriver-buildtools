@@ -5,7 +5,7 @@ set -eux
 . ../definitions.sh
 . ../../helper-functions.sh
 
-GOBJFS_VERSION=0da35bfa
+GOBJFS_VERSION=3b591baf7518987ce1b6c828865f0089007281e4
 GOBJFS_DIR=${SOURCES_DIR}/gobjfs.git
 BUILD_DIR=build
 
