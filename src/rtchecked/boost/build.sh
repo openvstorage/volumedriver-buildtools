@@ -61,7 +61,7 @@ import feature ;
 project : default-build <toolset>gcc ;
 
 # Python configuration
-using python : 2.7 : /usr ;
+using python : \${PYTHON_VERSION} : /usr ;
 
 # List of --with-<library> and --without-<library>
 # options. If left empty, all libraries will be built.
