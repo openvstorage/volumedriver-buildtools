@@ -46,9 +46,9 @@ RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list
     apt-get update -qq && \
     apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
     apt-get install -y libev4 && \
-    cd /root && apt-get download --allow-unauthenticated arakoon alba && \
-    dpkg -i --ignore-depends=libgflags2,libsnappy1 alba_*_amd64.deb arakoon_*_amd64.deb && \
-    rm alba_*_amd64.deb arakoon_*_amd64.deb && \
+    cd /root && apt-get download --allow-unauthenticated arakoon && \
+    dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
+    rm arakoon_*_amd64.deb && \
     apt-get clean
 
 RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
