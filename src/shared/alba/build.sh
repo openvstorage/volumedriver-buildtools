@@ -2,7 +2,7 @@
 set -eux
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
 
-ALBA_VERSION=ac562875a49c535ab0371d2ee9fde1ce2b6ac6ba
+ALBA_VERSION=0.9.18
 ALBA_DIR=../../../../alba.git
 
 . ../definitions.sh
