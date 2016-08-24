@@ -30,7 +30,8 @@ RUN apt-get update -qq && \
                        libgflags-dev libsnappy-dev \
                        redis-server libhiredis-dev libhiredis-dbg \
                        libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
-                       librdmacm-dev libibverbs-dev liburiparser-dev python-nose fuse \
+                       librdmacm-dev libibverbs-dev liburiparser-dev \
+                       python-nose python3-nose fuse \
                        python-protobuf \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean
