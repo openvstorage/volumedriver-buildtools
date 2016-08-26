@@ -32,9 +32,12 @@ RUN apt-get update -qq && \
                        libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
                        librdmacm-dev libibverbs-dev liburiparser-dev \
                        python-nose python3-nose fuse \
-                       python-protobuf \
+                       python-protobuf python3-pip \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean
+
+# No ubuntu package for it!?
+RUN pip3 install python3-protobuf
 
 RUN groupadd -g 1002 jenkins && \
     useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins && \
