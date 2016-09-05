@@ -2,26 +2,23 @@
 set -eux
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
 
-GTEST_VERSION=gtest-1.4.0
-GTEST_DIR=$GTEST_VERSION
-GTEST_PACKAGE=$GTEST_VERSION.tar.bz2
+GTEST_VERSION=1.4.0
+GTEST_PACKAGE=release-${GTEST_VERSION}.tar.gz
+GTEST_DIR=googletest-release-1.4.0
 GTEST_BUILD_DIR=gtest_build
-GTEST_URL=https://googletest.googlecode.com/files/$GTEST_PACKAGE
+GTEST_URL=https://github.com/google/googletest/archive/${GTEST_PACKAGE}
 
 . ../definitions.sh || exit
 . ../../helper-functions.sh || exit
 
 get_package_or_die $GTEST_PACKAGE $GTEST_URL
 
-
-
 echo ">+>+> Cleaning up from previous build"
 rm -rf $GTEST_DIR $GTEST_BUILD_DIR
 echo ">+>+> Done cleaning up from previous build"
 
-
 echo ">+>+> Unpacking $GTEST_PACKAGE"
-tar -xjf $SOURCES_DIR/$GTEST_PACKAGE || exit
+tar xf $SOURCES_DIR/$GTEST_PACKAGE || exit
 echo ">+>+> Done unpacking $GTEST_PACKAGE"
 
 echo ">+>+> Patching $GTEST_VERSION"
@@ -32,6 +29,11 @@ patch -p1 < ../gtest.patch2 || exit
 popd
 echo "<+<+< Done patching $GTEST_VERSION"
 
+echo ">+>+> Running autotools for ${GTEST_VERSION}"
+pushd ${GTEST_DIR}
+autoreconf -isv
+popd
+echo "<+<+< Done running autootls for ${GTEST_VERSION}"
 
 mkdir $GTEST_BUILD_DIR
 pushd $GTEST_BUILD_DIR
