@@ -12,7 +12,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
     yum -y install sudo wget iproute \
                    gcc gcc-c++ clang boost-devel make \
                    flex bison gawk check pkgconfig autoconf libtool bc gettext gettext-devel \
-                   unzip doxygen dkms pylint git mercurial cmake lcov \
+                   unzip doxygen dkms pylint git mercurial cmake3 lcov \
                    openssl-devel python-devel libxml2-devel librabbitmq-devel  \
                    libaio-devel krb5-devel c-ares-devel check-devel valgrind-devel \
                    librdmacm-devel loki-lib-devel protobuf-devel lttng-ust-devel \
@@ -21,9 +21,13 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    redis hiredis-devel lz4-devel \
                    python-nose libcurl-devel \
                    rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
-                   supervisor rpcbind && \
+                   uriparser-devel supervisor rpcbind libunwind glog-devel && \
     yum clean all && \
+    ln -s /usr/bin/cmake3 /usr/bin/cmake && \
     rm -rf /usr/share/doc/*
+
+# libunwind is desired by glog which in turn is (at the moment?) used by gobjfs
+RUN ln -s /usr/lib64/libunwind.so.8 /usr/lib64/libunwind.so
 
 # add jenkins user -- this is required for git to work
 # note: jenkins has uid 1001 & gid 1002 on our build hosts, this needs to be reflected in here!

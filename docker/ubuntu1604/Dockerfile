@@ -16,9 +16,10 @@ RUN apt-get update -qq && \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
-                       wget libssl-dev libpython2.7-dev libxml2-dev \
+                       wget libssl-dev libpython2.7-dev libpython3.5-dev libxml2-dev \
                        libcurl4-openssl-dev libc6-dbg liblz4-dev \
-                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev && \
+                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev \
+                       libunwind8 libgoogle-glog-dev && \
     apt-get -y autoremove --purge && apt-get clean
 
 # for volumedriver-core
@@ -28,11 +29,15 @@ RUN apt-get update -qq && \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
                        libgflags-dev libsnappy-dev \
                        redis-server libhiredis-dev libhiredis-dbg \
-                        libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
-                       librdmacm-dev libibverbs-dev python-nose fuse \
-                       python-protobuf \
+                       libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
+                       librdmacm-dev libibverbs-dev liburiparser-dev \
+                       python-nose python3-nose fuse \
+                       python-protobuf python3-pip \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean
+
+# No ubuntu package for it!?
+RUN pip3 install python3-protobuf
 
 RUN groupadd -g 1002 jenkins && \
     useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins && \
@@ -45,9 +50,9 @@ RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list
     apt-get update -qq && \
     apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
     apt-get install -y libev4 && \
-    cd /root && apt-get download --allow-unauthenticated arakoon alba && \
-    dpkg -i --ignore-depends=libgflags2,libsnappy1 alba_*_amd64.deb arakoon_*_amd64.deb && \
-    rm alba_*_amd64.deb arakoon_*_amd64.deb && \
+    cd /root && apt-get download --allow-unauthenticated arakoon && \
+    dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
+    rm arakoon_*_amd64.deb && \
     apt-get clean
 
 RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \

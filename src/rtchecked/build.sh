@@ -11,7 +11,7 @@ check_buildtools_version
 
 #order is important here ladies and gentlemen"
 
-PACKAGES="boost crakoon fuse fuse3 gtest webstor simpleamqpclient ganesha libnfs rocksdb capnproto alba buildtools"
+PACKAGES="boost crakoon fuse fuse3 gtest webstor simpleamqpclient ganesha libnfs rocksdb capnproto gobjfs alba buildtools"
 
 PACKAGES_TO_BUILD=${RECIPE:-"$PACKAGES"}
 

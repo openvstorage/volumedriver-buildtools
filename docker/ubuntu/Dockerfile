@@ -29,9 +29,10 @@ RUN apt-get update && \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
-                       wget libssl-dev libpython2.7-dev libxml2-dev \
+                       wget libssl-dev libpython2.7-dev libpython3.4-dev libxml2-dev \
                        libcurl4-openssl-dev libc6-dbg liblz4-dev \
-                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev && \
+                       librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev \
+                       libunwind8 libgoogle-glog-dev && \
     apt-get -y autoremove --purge && apt-get clean && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 99 && \
     update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 99 && \
@@ -46,9 +47,9 @@ RUN apt-get update && \
                        libtokyocabinet-dev libbz2-dev protobuf-compiler \
                        libgflags-dev libsnappy-dev \
                        redis-server libhiredis-dev libhiredis-dbg \
-                        libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
-                       librdmacm-dev libibverbs-dev python-nose fuse \
-                       python-protobuf \
+                       libomniorb4-dev omniidl omniidl-python omniorb-nameserver \
+                       librdmacm-dev libibverbs-dev liburiparser-dev \
+                       python-nose python3-nose fuse python-protobuf \
                        supervisor rpcbind && \
      apt-get -y autoremove --purge && apt-get clean
 
