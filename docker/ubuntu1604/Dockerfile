@@ -63,6 +63,12 @@ RUN usermod -a -G lp jenkins && \
     usermod -a -G games jenkins && \
     usermod -a -G floppy jenkins
 
+# configure clang and friends
+RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 100 && \
+    update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.8 100 && \
+    update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-3.8 100
+
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
 
