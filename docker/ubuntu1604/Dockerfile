@@ -46,7 +46,7 @@ RUN groupadd -g 1002 jenkins && \
 # volumedriver-core tests use arakoon & alba
 # (note: apt-get install -y --allow-unauthenticated arakoon alba does not yet work on 16.04)
 # volumedriver-core needs accelio library to build
-RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
+RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update -qq && \
     apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
     apt-get install -y libev4 && \
