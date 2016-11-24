@@ -5,7 +5,7 @@ set -eux
 . ../definitions.sh
 . ../../helper-functions.sh
 
-GTEST_VERSION=release-1.7.0
+GTEST_VERSION=release-1.8.0
 GTEST_DIR=${SOURCES_DIR}/googletest.git
 BUILD_DIR=build
 
@@ -50,8 +50,8 @@ echo "<+<+< Done building $GTEST_VERSION"
 echo ">+>+> Installing $GTEST_VERSION"
 rm -f ${PREFIX}/lib/libgtest*.a
 rm -rf ${PREFIX}/include/gtest
-cp libgtest.a ${PREFIX}/lib/
-cp -a ${GTEST_DIR}/include/gtest ${PREFIX}/include/
+cp googlemock/gtest/libgtest.a ${PREFIX}/lib/
+cp -a ${GTEST_DIR}/googletest/include/gtest ${PREFIX}/include/
 echo "<+<+< Done installing $GTEST_VERSION"
 
 popd
