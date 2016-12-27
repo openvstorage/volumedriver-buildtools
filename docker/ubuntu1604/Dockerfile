@@ -48,7 +48,9 @@ RUN groupadd -g 1002 jenkins && \
 # volumedriver-core needs accelio library to build
 RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update -qq && \
-    apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
+    apt-get install -y --allow-unauthenticated \
+    	    libxio0 libxio0-dbg libxio0-dbgsym \
+    	    libxio-dev libxio-dev-dbgsym && \
     apt-get install -y libev4 && \
     cd /root && apt-get download --allow-unauthenticated arakoon && \
     dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
