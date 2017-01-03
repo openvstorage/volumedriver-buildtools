@@ -73,7 +73,9 @@ RUN VALVERSION="3.11.0" && \
 RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update && \
     apt-get install -y --allow-unauthenticated arakoon alba && \
-    apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
+    apt-get install -y --allow-unauthenticated \
+    	    libxio0 libxio0-dbg libxio0-dbgsym \
+    	    libxio-dev libxio-dev-dbgsym && \
     apt-get clean
 
 RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \

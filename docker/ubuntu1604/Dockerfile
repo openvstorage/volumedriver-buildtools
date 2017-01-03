@@ -46,9 +46,11 @@ RUN groupadd -g 1002 jenkins && \
 # volumedriver-core tests use arakoon & alba
 # (note: apt-get install -y --allow-unauthenticated arakoon alba does not yet work on 16.04)
 # volumedriver-core needs accelio library to build
-RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
+RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update -qq && \
-    apt-get install -y --allow-unauthenticated libxio0 libxio-dev && \
+    apt-get install -y --allow-unauthenticated \
+    	    libxio0 libxio0-dbg libxio0-dbgsym \
+    	    libxio-dev libxio-dev-dbgsym && \
     apt-get install -y libev4 && \
     cd /root && apt-get download --allow-unauthenticated arakoon && \
     dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
@@ -62,6 +64,12 @@ RUN echo 'BatchMode yes' >>/etc/ssh/ssh_config && \
 RUN usermod -a -G lp jenkins && \
     usermod -a -G games jenkins && \
     usermod -a -G floppy jenkins
+
+# configure clang and friends
+RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 100 && \
+    update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.8 100 && \
+    update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-3.8 100
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
