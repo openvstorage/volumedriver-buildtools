@@ -35,6 +35,7 @@ echo "<+<+< Done autoreconf $ALBA_VERSION"
 echo ">+>+> Configuring $ALBA_VERSION"
 CXXFLAGS="$CXX_COMPILER_FLAGS" \
     CXX=$CXX_COMPILER  \
+    LDFLAGS="-L${PREFIX}/lib" \
     ./configure \
     --prefix=$PREFIX \
     --disable-shared
