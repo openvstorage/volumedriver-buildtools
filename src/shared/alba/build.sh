@@ -2,7 +2,7 @@
 set -eux
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
 
-ALBA_VERSION=1.3.3
+ALBA_VERSION=ac41962f068571d561043d39272b1a33254ceb3d
 ALBA_DIR=../../../../alba.git
 
 . ../definitions.sh
@@ -35,6 +35,7 @@ echo "<+<+< Done autoreconf $ALBA_VERSION"
 echo ">+>+> Configuring $ALBA_VERSION"
 CXXFLAGS="$CXX_COMPILER_FLAGS" \
     CXX=$CXX_COMPILER  \
+    LDFLAGS="-L${PREFIX}/lib -lboost_filesystem" \
     ./configure \
     --prefix=$PREFIX \
     --disable-shared
