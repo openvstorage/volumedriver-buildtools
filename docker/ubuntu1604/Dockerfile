@@ -12,7 +12,7 @@ RUN apt-get update -qq && \
     apt-get dist-upgrade -y && \
     apt-get install -y gcc g++ clang-3.8 valgrind \
                        libboost1.58-all-dev \
-                       build-essential sudo \
+                       build-essential sudo libgcrypt20-dev libgcrypt20 \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \

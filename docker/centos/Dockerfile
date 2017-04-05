@@ -19,7 +19,7 @@ RUN echo '%_install_langs C' >> /etc/rpm/macros && \
                    cppzmq-devel tokyocabinet-devel bzip2-devel protobuf-compiler \
                    gflags-devel snappy-devel omniORB-devel omniORB-servers python-omniORB \
                    redis hiredis-devel lz4-devel \
-                   python-nose libcurl-devel \
+                   python-nose libcurl-devel libgcrypt-devel libgcrypt \
                    rpm rpm-build fuse protobuf-python fakeroot libxio-devel \
                    uriparser-devel supervisor rpcbind libunwind glog-devel && \
     yum clean all && \

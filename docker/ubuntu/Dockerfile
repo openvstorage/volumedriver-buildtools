@@ -25,7 +25,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y gcc-4.9 g++-4.9 libstdc++-4.9-dev clang-3.5 \
                        libboost1.57-all-dev \
-                       build-essential \
+                       build-essential libgcrypt11-dev libgcrypt11 \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
