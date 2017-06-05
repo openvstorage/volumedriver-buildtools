@@ -16,11 +16,3 @@ then
   chown ${UID} /home/jenkins
   [ -d /home/jenkins/.ssh ] && chown ${UID} /home/jenkins/.ssh
 fi
-
-# update alba & arakoon packages to latest/greatest
-
-##apt-get update -qq
-##apt-get install -qq -y alba arakoon
-
-# finally execute the command the user requested
-exec "$@"

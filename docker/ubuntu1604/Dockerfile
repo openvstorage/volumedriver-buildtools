@@ -12,7 +12,7 @@ RUN apt-get update -qq && \
     apt-get dist-upgrade -y && \
     apt-get install -y gcc g++ clang-3.8 valgrind \
                        libboost1.58-all-dev \
-                       build-essential sudo libgcrypt20-dev libgcrypt20 \
+                       build-essential sudo \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
@@ -52,8 +52,9 @@ RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list
     	    libxio0 libxio0-dbg libxio0-dbgsym \
     	    libxio-dev libxio-dev-dbgsym && \
     apt-get install -y libev4 && \
-    cd /root && apt-get download --allow-unauthenticated arakoon && \
+    cd /tmp && apt-get download --allow-unauthenticated arakoon && \
     dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
+    #chown _apt arakoon_*_amd64.deb && \
     rm arakoon_*_amd64.deb && \
     apt-get clean
 
@@ -71,9 +72,16 @@ RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 100 &&
     update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.8 100 && \
     update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-3.8 100
 
+# Redis cannot start as a daemon on a Docker build.
+RUN sed -i "s/daemonize yes/daemonize no/g" /etc/redis/redis.conf
+
+# To preserve the logs for redis
+RUN chown -R redis:redis /var/log/redis/
+
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
 
-ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
+#ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 
 CMD [ "/usr/bin/supervisord" ]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
