@@ -12,7 +12,7 @@ RUN apt-get update -qq && \
     apt-get dist-upgrade -y && \
     apt-get install -y gcc g++ clang-3.8 valgrind \
                        libboost1.58-all-dev \
-                       build-essential sudo libgcrypt20-dev libgcrypt20 \
+                       build-essential sudo \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
                        unzip doxygen dkms debhelper pylint git cmake \
@@ -43,6 +43,9 @@ RUN groupadd -g 1002 jenkins && \
     useradd jenkins -s /bin/bash -g jenkins -m -u ${UID} -g 1002 -d /home/jenkins && \
     echo "jenkins ALL=NOPASSWD: ALL" >/etc/sudoers.d/jenkins
 
+#Creating TMP Directoy To Avoid permission Issues -- Bug in Xenial
+RUN mkdir /opt/tmp_docker; chmod -R 777 /opt/tmp_docker
+
 # volumedriver-core tests use arakoon & alba
 # (note: apt-get install -y --allow-unauthenticated arakoon alba does not yet work on 16.04)
 # volumedriver-core needs accelio library to build
@@ -52,8 +55,9 @@ RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list
     	    libxio0 libxio0-dbg libxio0-dbgsym \
     	    libxio-dev libxio-dev-dbgsym && \
     apt-get install -y libev4 && \
-    cd /root && apt-get download --allow-unauthenticated arakoon && \
+    cd /opt/tmp_docker && apt-get download --allow-unauthenticated arakoon && \
     dpkg -i --ignore-depends=libgflags2,libsnappy1 arakoon_*_amd64.deb && \
+    #chown _apt arakoon_*_amd64.deb && \
     rm arakoon_*_amd64.deb && \
     apt-get clean
 
@@ -70,6 +74,15 @@ RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 100 &&
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 100 && \
     update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.8 100 && \
     update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-3.8 100
+
+# Redis cannot start as a daemon on a Docker build.
+RUN sed -i "s/daemonize yes/daemonize no/g" /etc/redis/redis.conf
+
+# To preserve the logs for redis
+RUN chown -R redis:redis /var/log/redis/
+
+# Cleaning behind
+RUN rm -fr /opt/tmp_docker
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
