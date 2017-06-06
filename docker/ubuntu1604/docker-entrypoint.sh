@@ -16,3 +16,6 @@ then
   chown ${UID} /home/jenkins
   [ -d /home/jenkins/.ssh ] && chown ${UID} /home/jenkins/.ssh
 fi
+
+# finally execute the command the user requested
+exec "$@"
