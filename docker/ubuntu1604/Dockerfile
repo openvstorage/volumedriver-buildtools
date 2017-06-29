@@ -11,7 +11,6 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -qq && \
     apt-get dist-upgrade -y && \
     apt-get install -y gcc g++ clang-3.8 valgrind \
-                       libboost1.58-all-dev \
                        build-essential sudo libgcrypt20-dev libgcrypt20 \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
@@ -45,9 +44,12 @@ RUN groupadd -g 1002 jenkins && \
 
 # volumedriver-core tests use arakoon & alba
 # (note: apt-get install -y --allow-unauthenticated arakoon alba does not yet work on 16.04)
-# volumedriver-core needs accelio library to build
+# volumedriver needs accelio library to build
+# volumedriver needs boost 1.62 (hosted on our repo) to build
 RUN echo "deb http://apt.openvstorage.com unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
     apt-get update -qq && \
+    apt-get install -y --allow-unauthenticated \
+            libboost1.62-all-dev && \
     apt-get install -y --allow-unauthenticated \
     	    libxio0 libxio0-dbg libxio0-dbgsym \
     	    libxio-dev libxio-dev-dbgsym && \

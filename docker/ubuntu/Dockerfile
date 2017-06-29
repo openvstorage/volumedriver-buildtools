@@ -24,7 +24,6 @@ RUN apt-get update && \
     add-apt-repository -y ppa:afrank/boost && \
     apt-get update && \
     apt-get install -y gcc-4.9 g++-4.9 libstdc++-4.9-dev clang-3.5 \
-                       libboost1.57-all-dev \
                        build-essential libgcrypt11-dev libgcrypt11 \
                        flex bison gawk check pkg-config \
                        autoconf libtool realpath bc gettext lcov \
@@ -70,8 +69,11 @@ RUN VALVERSION="3.11.0" && \
 
 # volumedriver-core tests use arakoon & alba
 # volumedriver-core need accelio library to build
+# volumedriver needs boost 1.62 (hosted on our repo) to build
 RUN echo "deb http://apt.openvstorage.org unstable main" > /etc/apt/sources.list.d/ovsaptrepo.list && \
-    apt-get update && \
+    apt-get update -qq && \
+    apt-get install -y --allow-unauthenticated \
+            libboost1.62-all-dev && \
     apt-get install -y --allow-unauthenticated arakoon alba && \
     apt-get install -y --allow-unauthenticated \
     	    libxio0 libxio0-dbg libxio0-dbgsym \
