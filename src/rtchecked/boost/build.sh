@@ -23,12 +23,8 @@ echo ">+>+> Unpacking $BOOST_PACKAGE"
 echo "<+<+< Done unpacking $BOOST_PACKAGE"
 
 echo ">+>+> Patching $BOOST_VERSION"
-# patch -p0 < boost.patch0 # a more descriptive name would be nice
 
-pushd $BOOST_DIR
-patch -p1 < ../boost-make-valgrind-happy.patch
-popd
- echo "<+<+< Done patching $BOOST_VERSION"
+echo "<+<+< Done patching $BOOST_VERSION"
 
 # Add the correct flags for boost compilation .. another build system..lovely
 BOOST_COMPILER_FLAGS=""
