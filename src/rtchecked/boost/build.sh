@@ -2,7 +2,7 @@
 set -eux
 . ${VOLUMEDRIVER_BUILD_CONFIGURATION?"You need to set the path to the build configuration file"}
 
-BOOST_VERSION_PRETTY=1.57.0
+BOOST_VERSION_PRETTY=1.58.0
 BOOST_VERSION=boost_$(echo -n ${BOOST_VERSION_PRETTY} | sed 's/\./_/g')
 BOOST_DIR=$BOOST_VERSION
 BOOST_PACKAGE=${BOOST_VERSION}.tar.bz2
