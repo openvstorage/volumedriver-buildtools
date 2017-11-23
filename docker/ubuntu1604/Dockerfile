@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -qq && \
     apt-get dist-upgrade -y && \
-    apt-get install -y gcc g++ clang-3.8 valgrind \
+    apt-get install -y gcc g++ valgrind \
                        libboost1.58-all-dev \
                        build-essential sudo libgcrypt20-dev libgcrypt20 \
                        flex bison gawk check pkg-config \
@@ -19,7 +19,8 @@ RUN apt-get update -qq && \
                        wget libssl-dev libpython2.7-dev libpython3.5-dev libxml2-dev \
                        libcurl4-openssl-dev libc6-dbg liblz4-dev \
                        librabbitmq-dev libaio-dev libkrb5-dev libc-ares-dev \
-                       libunwind8 libgoogle-glog-dev && \
+                       libunwind8 libgoogle-glog-dev \
+		       software-properties-common && \
     apt-get -y autoremove --purge && apt-get clean
 
 # for volumedriver-core
@@ -66,10 +67,14 @@ RUN usermod -a -G lp jenkins && \
     usermod -a -G floppy jenkins
 
 # configure clang and friends
-RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 100 && \
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 100 && \
-    update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-3.8 100 && \
-    update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-3.8 100
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" && \
+    apt-get update -qq && \
+    apt-get install -y clang-5.0 && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-5.0 100 && \
+    update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-5.0 100 && \
+    update-alternatives --install /usr/bin/llvm-symbolizer llvm-symbolizer /usr/bin/llvm-symbolizer-5.0 100
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /sbin/docker-entrypoint.sh
