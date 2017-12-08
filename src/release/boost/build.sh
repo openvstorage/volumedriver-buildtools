@@ -91,7 +91,7 @@ echo "<+<+< Done configuring $BOOST_VERSION"
 mv ../project-config.jam .
 
 echo ">+>+> Building $BOOST_VERSION"
-./b2 -a -d2 -q -j ${BUILD_NUM_PROCESSES-2} --build-dir=$BOOST_BUILD_DIR --disable-icu toolset=gcc-vd link=static variant=debug threading=multi
+./b2 -a -d2 -q -j ${BUILD_NUM_PROCESSES-2} --build-dir=$BOOST_BUILD_DIR --disable-icu toolset=gcc-vd link=static variant=release threading=multi
 echo "<+<+< Done building $BOOST_VERSION"
 
 echo ">+>+> Removing previous installation (if any)"
@@ -100,7 +100,7 @@ rm -rf ${PREFIX}/lib/libboost*
 echo "<+<+< Done removing previous installation"
 
 echo ">+>+> Installing $BOOST_VERSION"
-./b2 -a -d2 -q -j ${BUILD_NUM_PROCESSES-2} --build-dir=$BOOST_BUILD_DIR --disable-icu toolset=gcc-vd link=static variant=debug threading=multi install
+./b2 -a -d2 -q -j ${BUILD_NUM_PROCESSES-2} --build-dir=$BOOST_BUILD_DIR --disable-icu toolset=gcc-vd link=static variant=release threading=multi install
 echo "<+<+< Done installing $BOOST_VERSION"
 
 BUILD_SIZE=`du -sh`

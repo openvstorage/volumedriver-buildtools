@@ -22,6 +22,7 @@ echo "<+<+< Done unpacking $ALBA_VERSION"
 echo ">+>+> patching $ALBA_VERSION"
 PATCH_DIR="${PWD}/../../shared/alba"
 pushd ${ALBA_DIR}
+patch -p1 < ${PATCH_DIR}/disable-boost-log-dyn-link.patch
 popd
 echo "<+<+< Done patching $ALBA_VERSION"
 

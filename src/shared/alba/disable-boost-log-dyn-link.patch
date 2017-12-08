@@ -1,0 +1,36 @@
+diff --git a/cpp/automake_client/Makefile.am b/cpp/automake_client/Makefile.am
+index a8c5018..01c1576 100644
+--- a/cpp/automake_client/Makefile.am
++++ b/cpp/automake_client/Makefile.am
+@@ -70,14 +70,13 @@ alba_proxy_client_test_CXXFLAGS = -std=c++14
+ 
+ alba_proxy_client_test_CPPFLAGS = \
+ 	-I$(abs_top_srcdir)/../include \
+-	-I$(abs_top_srcdir)/../src/lib \
+-	-DBOOST_LOG_DYN_LINK
++	-I$(abs_top_srcdir)/../src/lib
+ 
+ alba_proxy_client_test_LDADD = \
+ 	./libalbaproxy.la \
++	-lboost_log \
+ 	-lboost_system \
+ 	-lboost_thread \
+-	-lboost_log \
+ 	-lpthread \
+ 	-lboost_program_options \
+         -lrdmacm \
+@@ -89,12 +88,12 @@ alba_test_client_SOURCES = \
+ 	../src/examples/test_client.cc
+ 
+ alba_test_client_CXXFLAGS = -std=c++14
+-alba_test_client_CPPFLAGS = -I$(abs_top_srcdir)/../include -DBOOST_LOG_DYN_LINK
++alba_test_client_CPPFLAGS = -I$(abs_top_srcdir)/../include
+ alba_test_client_LDADD = \
+ 	./libalbaproxy.la \
++	-lboost_log \
+ 	-lboost_system \
+ 	-lboost_thread \
+-	-lboost_log \
+ 	-lpthread \
+ 	-lboost_program_options \
+         -lrdmacm \
