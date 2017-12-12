@@ -70,7 +70,7 @@ RUN usermod -a -G lp jenkins && \
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" && \
     apt-get update -qq && \
-    apt-get install -y clang-5.0 && \
+    apt-get install -y clang-5.0 clang-tools-5.0 && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-5.0 100 && \
     update-alternatives --install /usr/bin/scan-build scan-build /usr/bin/scan-build-5.0 100 && \
